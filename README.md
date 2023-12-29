@@ -1,4 +1,6 @@
 # Air-Play-Ground
+ Multi-component ticket printing management application.
+ 
 Ensemble d'applications en intercommunication provenant de différentes technologies RPC Plug&amp;Play
 
 multi-component application for managing ticket printing, featuring distinct parts for interface handling, database management, intelligence, and algorithms. Here's how it could be structured:
