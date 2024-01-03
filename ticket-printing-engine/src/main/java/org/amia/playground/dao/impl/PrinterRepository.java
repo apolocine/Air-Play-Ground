@@ -44,7 +44,7 @@ public class PrinterRepository implements CRUDRepository<Printer> {
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        printer.setId(generatedKeys.getInt(1));
+                        printer.setPrinterID(generatedKeys.getInt(1));
                     }
                 }
             }
@@ -81,7 +81,7 @@ public class PrinterRepository implements CRUDRepository<Printer> {
 
             if (rs.next()) {
                 Printer printer = new Printer();
-                printer.setId(rs.getInt("PrinterID"));
+                printer.setPrinterID(rs.getInt("PrinterID"));
                 printer.setName(rs.getString("Name"));
                 printer.setLocation(rs.getString("Location"));
                 printer.setStatus(rs.getString("Status"));
@@ -104,7 +104,7 @@ public class PrinterRepository implements CRUDRepository<Printer> {
 
             while (rs.next()) {
                 Printer printer = new Printer();
-                printer.setId(rs.getInt("PrinterID"));
+                printer.setPrinterID(rs.getInt("PrinterID"));
                 printer.setName(rs.getString("Name"));
                 printer.setLocation(rs.getString("Location"));
                 printer.setStatus(rs.getString("Status"));
@@ -126,7 +126,7 @@ public class PrinterRepository implements CRUDRepository<Printer> {
             stmt.setString(3, printer.getStatus());
             stmt.setString(4,printer.getDescription());
             stmt.setBoolean(5, printer.isActive());
-            stmt.setInt(6, printer.getId());
+            stmt.setInt(6, printer.getPrinterID());
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {

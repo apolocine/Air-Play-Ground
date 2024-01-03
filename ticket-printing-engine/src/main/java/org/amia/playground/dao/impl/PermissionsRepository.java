@@ -41,7 +41,7 @@ public class PermissionsRepository implements CRUDRepository<Permission> {
                 // Retrieve the generated id
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        permission.setId(generatedKeys.getInt(1));
+                        permission.setPermissionID(generatedKeys.getInt(1));
                     }
                 }
             }
@@ -62,7 +62,7 @@ public class PermissionsRepository implements CRUDRepository<Permission> {
 
             if (rs.next()) {
                 Permission permission = new Permission();
-                permission.setId(rs.getInt("PermissionID"));
+                permission.setPermissionID(rs.getInt("PermissionID"));
                 permission.setActionText(rs.getString("ActionText"));
                 return permission;
             }
@@ -82,7 +82,7 @@ public class PermissionsRepository implements CRUDRepository<Permission> {
 
             while (rs.next()) {
                 Permission permission = new Permission();
-                permission.setId(rs.getInt("PermissionID"));
+                permission.setPermissionID(rs.getInt("PermissionID"));
                 permission.setActionText(rs.getString("ActionText"));
                 permissions.add(permission);
             }
@@ -98,7 +98,7 @@ public class PermissionsRepository implements CRUDRepository<Permission> {
         String sql = "UPDATE Permissions SET ActionText = ? WHERE PermissionID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, permission.getActionText());
-            stmt.setInt(2, permission.getId());
+            stmt.setInt(2, permission.getPermissionID());
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {

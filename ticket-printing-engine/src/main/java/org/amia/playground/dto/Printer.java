@@ -1,11 +1,12 @@
 package org.amia.playground.dto;
 public class Printer {
-    private int id;
-    private String name;
-    private String location;
-    private String status; 
-    private boolean isActive;
-    private String description;
+	  private int printerID;
+	    private String name;
+	    private String location;
+	    private String status;
+	    private String description;
+	    private boolean isActive;
+    
     public String getDescription() {
 		return description;
 	}
@@ -21,16 +22,14 @@ public class Printer {
         this.status = status;
     }
 
-    // Getters et Setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
+    
+    public int getPrinterID() {
+		return printerID;
+	}
+	public void setPrinterID(int printerID) {
+		this.printerID = printerID;
+	}
+	public String getName() {
         return name;
     }
 

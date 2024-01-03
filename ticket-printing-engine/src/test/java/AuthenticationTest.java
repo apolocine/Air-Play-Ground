@@ -85,7 +85,7 @@ void unInstall() {
 		permissionsRepo.create(newPermission);
 		Role role = new Role("Administarteur");
 		Role roleXriten = roleRepo.create(role);
-		roleRepo.addPermissionToRole(newPermission.getId(), roleXriten.getRoleID());
+		roleRepo.addPermissionToRole(newPermission.getPermissionID(), roleXriten.getRoleID());
 		
 		
 		boolean canEditProfile = authorizationService.checkAccess(currentUser, "edit_profile");
@@ -108,7 +108,7 @@ void unInstall() {
 		permissionsRepo.create(newPermission);
 		Role role = new Role("Administarteur");
 		Role roleXriten = roleRepo.create(role);
-		roleRepo.addPermissionToRole(newPermission.getId(), roleXriten.getRoleID());
+		roleRepo.addPermissionToRole(newPermission.getPermissionID(), roleXriten.getRoleID());
 		
 		User user = new User("username", "password", roleXriten );
 		User userXriten = userRepo.create(user);
@@ -129,7 +129,7 @@ void unInstall() {
 		Role role = new Role("Administarteur");
 		Role roleXriten = roleRepo.create(role);
 		
-		roleRepo.addPermissionToRole(newPermission.getId(), roleXriten.getRoleID());
+		roleRepo.addPermissionToRole(newPermission.getPermissionID(), roleXriten.getRoleID());
 		String username = "username";
 		String password = "password";
 		User currentUser = userService.authenticateUser(username, password);

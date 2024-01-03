@@ -1,13 +1,8 @@
 package org.amia.playground.dto;
 public class Permission {
-    private int id;
+    private int permissionID;
     private String actionText;
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
+	 
 	public String getActionText() {
 		return actionText;
 	}
@@ -21,5 +16,11 @@ public class Permission {
 
     public Permission() {
 	 
+	}
+	public int getPermissionID() {
+		return permissionID;
+	}
+	public void setPermissionID(int permissionID) {
+		this.permissionID = permissionID;
 	} 
 }

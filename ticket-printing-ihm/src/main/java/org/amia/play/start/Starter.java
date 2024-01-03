@@ -1,4 +1,4 @@
-package org.amia.playground.ihm;
+package org.amia.play.start;
 
 import javax.swing.SwingUtilities;
 

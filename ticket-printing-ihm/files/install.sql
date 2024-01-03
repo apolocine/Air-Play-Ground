@@ -82,9 +82,6 @@ CREATE TABLE IF NOT EXISTS   UserRoles (
 
 
 
- 
- 
-
 CREATE TABLE IF NOT EXISTS RolePermissions (
     RoleID INT,
     PermissionID INT,
@@ -94,7 +91,7 @@ CREATE TABLE IF NOT EXISTS RolePermissions (
 );
 
 
-CREATE TABLE IF NOT EXISTS GamePrinter (
+CREATE TABLE IF NOT EXISTS GamePrinters (
     GameID INT,
     PrinterID INT,
     PRIMARY KEY (GameID, PrinterID),
@@ -102,4 +99,15 @@ CREATE TABLE IF NOT EXISTS GamePrinter (
     FOREIGN KEY (PrinterID) REFERENCES Printers(PrinterID)
 );
 
+
+ CREATE TABLE IF NOT EXISTS Tickets (
+    TicketID INT AUTO_INCREMENT PRIMARY KEY,
+    GameID INT,
+    Price DOUBLE,
+    Barcode VARCHAR(255),
+    GameImage BLOB,
+    LogoImage BLOB,
+    FOREIGN KEY (GameID) REFERENCES Games(GameID)  -- Adjust according to your actual FK constraints
+);
+ 
 
