@@ -81,7 +81,29 @@ public class GameRepository implements CRUDRepository<Game> {
 		}
 		return null; // or consider throwing an exception
 	}
+	 public List<Game> readAllGamesWithoutPrinter() {
+	        List<Game> gamesWithoutPrinters = new ArrayList<>();
+	        String sql = "SELECT * FROM Games WHERE GameID NOT IN (SELECT GameID FROM GamePrinters)";
 
+	        try (Statement stmt = conn.createStatement();
+	             ResultSet rs = stmt.executeQuery(sql)) {
+	            
+	            while (rs.next()) {
+	                Game game = new Game(); // Assuming a Game class with appropriate constructor or setters
+	                game.setGameID(rs.getInt("GameID"));
+	                game.setGameName(rs.getString("GameName"));
+	                game.setAgeRestriction(rs.getString("AgeRestriction"));
+	                
+	                // ... set other fields as necessary ...
+
+	                gamesWithoutPrinters.add(game);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace(); // Replace with more robust error handling
+	        }
+	        return gamesWithoutPrinters;
+	    }
+	 
 	@Override
 	public boolean delete(int id) {
 		String sql = "DELETE FROM Games WHERE GameID = ?";

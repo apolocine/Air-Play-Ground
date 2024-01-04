@@ -1,16 +1,44 @@
 package org.amia.playground.dto;
-public class GamePrinter {
-    private int gamePrinterId;
+
+
+/**
+ * 
+ *
+ *
+ 
+ 1-1
+ CREATE TABLE IF NOT EXISTS GamePrinters (
+	Name varchar (250) NOT NULL,
+    GameID INT,
+    PrinterID INT,
+    GameImage MEDIUMBLOB,
+    PRIMARY KEY (GameID, PrinterID),
+    FOREIGN KEY (GameID) REFERENCES Games(GameID),
+    FOREIGN KEY (PrinterID) REFERENCES Printers(PrinterID)
+);
+
+1-n
+CREATE TABLE IF NOT EXISTS GamePrinters (
+    GameID INT UNIQUE,
+    PrinterID INT,
+    Name VARCHAR(255) NOT NULL,
+    GameImage MEDIUMBLOB,
+    PRIMARY KEY (GameID),
+    FOREIGN KEY (GameID) REFERENCES Games(GameID),
+    FOREIGN KEY (PrinterID) REFERENCES Printers(PrinterID)
+);
+
+
+
+ * 
+ * 
+ */
+public class GamePrinter { 
     private String name;
     private Game game;
     private Printer printer;
     private byte[] gameImage; // Consider how you'll handle image data
-	public int getGamePrinterId() {
-		return gamePrinterId;
-	}
-	public void setGamePrinterId(int gamePrinterId) {
-		this.gamePrinterId = gamePrinterId;
-	}
+ 
 	public String getName() {
 		return name;
 	}

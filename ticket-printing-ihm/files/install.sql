@@ -91,10 +91,14 @@ CREATE TABLE IF NOT EXISTS RolePermissions (
 );
 
 
+ 
+
 CREATE TABLE IF NOT EXISTS GamePrinters (
-    GameID INT,
+    GameID INT UNIQUE,
     PrinterID INT,
-    PRIMARY KEY (GameID, PrinterID),
+    Name VARCHAR(255) NOT NULL,
+    GameImage MEDIUMBLOB,
+    PRIMARY KEY (GameID),
     FOREIGN KEY (GameID) REFERENCES Games(GameID),
     FOREIGN KEY (PrinterID) REFERENCES Printers(PrinterID)
 );
@@ -105,8 +109,8 @@ CREATE TABLE IF NOT EXISTS GamePrinters (
     GameID INT,
     Price DOUBLE,
     Barcode VARCHAR(255),
-    GameImage BLOB,
-    LogoImage BLOB,
+    GameImage MEDIUMBLOB, 
+    LogoImage MEDIUMBLOB,
     FOREIGN KEY (GameID) REFERENCES Games(GameID)  -- Adjust according to your actual FK constraints
 );
  

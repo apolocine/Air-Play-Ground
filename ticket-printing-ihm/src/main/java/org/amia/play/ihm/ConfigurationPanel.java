@@ -32,12 +32,12 @@ public class ConfigurationPanel extends JTabbedPane {
     public ConfigurationPanel() {
     	
 		addTab("login", new LoginForm(new UserService(con) ));
-		addTab("Games", new GameForm(new GameRepository(con)));
 		addTab("Users", new UserForm(new UserRepository(con)));
 		addTab("Roles", new RoleForm(new RoleRepository(con), new PermissionsRepository(con)));
 		addTab("Permissions", new PermissionForm(new PermissionsRepository(con)));
+		addTab("Games", new GameForm(new GameRepository(con)));
 		addTab("Printers", new PrinterForm( new PrinterRepository(con) ));
-		addTab("Games&Printers", new GamePrinterForm( new GamePrinterRepository(con) ));
+		addTab("Games&Printers", new GamePrinterForm( new GamePrinterRepository(con) ,new GameRepository(con),new PrinterRepository(con)));
 		
         // ... potentially other tabs for more entities ...
     }

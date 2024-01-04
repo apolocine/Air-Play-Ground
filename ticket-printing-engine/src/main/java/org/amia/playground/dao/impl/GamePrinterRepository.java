@@ -15,7 +15,9 @@ import org.amia.playground.dto.Game;
 import org.amia.playground.dto.GamePrinter;
 import org.amia.playground.dto.Printer;
 
-public class GamePrinterRepository implements CRUDRepository<GamePrinter> {
+public class GamePrinterRepository 
+//implements CRUDRepository<GamePrinter> 
+{
 	private final Connection conn;
 	private static final Logger LOGGER = Logger.getLogger(GamePrinterRepository.class.getName());
 
@@ -91,17 +93,6 @@ public class GamePrinterRepository implements CRUDRepository<GamePrinter> {
 		return printers; // Return the list of printers
 	}
 
-//	public void addGamePrinter(int gameId, int printerId) {
-//	    String sql = "INSERT INTO GamePrinter (GameID, PrinterID) VALUES (?, ?)";
-//	    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-//	        stmt.setInt(1, gameId);
-//	        stmt.setInt(2, printerId);
-//	        stmt.executeUpdate();
-//	    } catch (SQLException e) {
-//	        // Log error and perhaps re-throw as a runtime exception
-//	    	LOGGER.log(Level.SEVERE, "Error addGamePrinter", e);
-//	    }
-//	}
 	public void addGameToPrinter(int gameId, int printerId) {
 
 		if ((ifGameExists(gameId) && ifPrinterExists(printerId))) {
@@ -184,118 +175,110 @@ public class GamePrinterRepository implements CRUDRepository<GamePrinter> {
 		return false;
 	}
 
-	@Override
-	public GamePrinter read(int gamePrinterId) {
-		String sql = "SELECT * FROM GamePrinters WHERE GamePrinterID = ?";
-		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, gamePrinterId);
-			try (ResultSet rs = stmt.executeQuery()) {
-				if (rs.next()) {
-					GamePrinter gamePrinter = new GamePrinter();
-					// Set GamePrinter fields from the database result set
-					// ...
-					return gamePrinter;
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace(); // Replace with more robust error handling
-		}
-		return null;
-	}
+ 
+	
+//    @Override
+    public GamePrinter create(GamePrinter gamePrinter) {
+        String sql = "INSERT INTO GamePrinters (GameID, PrinterID, Name, GameImage) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, gamePrinter.getGame().getGameID());
+            stmt.setInt(2, gamePrinter.getPrinter().getPrinterID());
+            stmt.setString(3, gamePrinter.getName());
+            stmt.setBytes(4, gamePrinter.getGameImage());
 
-	@Override
-	public GamePrinter update(GamePrinter gamePrinter) {
-		String sql = "UPDATE GamePrinters SET Name = ?, GameID = ?, PrinterID = ?, GameImage = ? WHERE GamePrinterID = ?";
-		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setString(1, gamePrinter.getName());
-			stmt.setInt(2, gamePrinter.getGame().getGameID());
-			stmt.setInt(3, gamePrinter.getPrinter().getPrinterID());
-			stmt.setBytes(4, gamePrinter.getGameImage());
-			stmt.setInt(5, gamePrinter.getGamePrinterId());
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                LOGGER.info("GamePrinter created successfully.");
+                return gamePrinter;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error creating GamePrinter: " + e.getMessage(), e);
+        }
+        LOGGER.info("GamePrinter Not created.");
+        
+        return null;
+    }
 
-			int affectedRows = stmt.executeUpdate();
-			if (affectedRows > 0) {
-				return gamePrinter;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace(); // Replace with more robust error handling
-		}
-		return null;
-	}
+//    @Override
+    public List<GamePrinter> readAll() {
+        List<GamePrinter> gamePrinters = new ArrayList<>();
+        String sql = "SELECT * FROM GamePrinters";
+        try (Statement stmt = conn.createStatement(); ResultSet rs  = stmt.executeQuery(sql)) {
+        	
+        	
+//           if (rs_.next()) {
+//                GamePrinter gamePrinter = new GamePrinter(); // Assume you have a constructor or setters
+//                // Set gamePrinter fields from result set
+//                
+//                
+//                gamePrinters.add(gamePrinter);
+//            }
+            
+        	// Assume you have executed a query and have a ResultSet rs
+          // ResultSet is typically obtained from executing a query on a Statement or PreparedStatement
+        	    
+        		
+        		 while (rs.next()) {  // If there's at least one result
+        	        GamePrinter gamePrinter = new GamePrinter();
 
-	@Override
-	public GamePrinter create(GamePrinter gamePrinter) {
-		// SQL statement to insert a new game printer association
-		String sql = "INSERT INTO GamePrinters (Name, GameID, PrinterID, GameImage) VALUES (?, ?, ?, ?)";
-		try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-			stmt.setString(1, gamePrinter.getName());
-			stmt.setInt(2, gamePrinter.getGame().getGameID());
-			stmt.setInt(3, gamePrinter.getPrinter().getPrinterID());
-			stmt.setBytes(4, gamePrinter.getGameImage());
+        	        // Directly setting attributes from the ResultSet
+        	        gamePrinter.setName(rs.getString("Name")); // Assuming there's a "Name" column in your result set
+        	        byte[] imageBytes = rs.getBytes("GameImage"); // Assuming there's a "GameImage" column
+        	        gamePrinter.setGameImage(imageBytes); // Assuming setGameImage expects a byte array
 
-			int affectedRows = stmt.executeUpdate();
-			if (affectedRows > 0) {
-				try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-					if (generatedKeys.next()) {
-						gamePrinter.setGamePrinterId(generatedKeys.getInt(1));
-						return gamePrinter;
-					}
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace(); // Replace with more robust error handling
-		}
-		return null;
-	}
+        	        // Handling associated Game and Printer objects
+        	        // This is simplistic. Normally, you might look up the full Game and Printer objects based on these IDs
+        	        int gameId = rs.getInt("GameID");
+        	        int printerId = rs.getInt("PrinterID");
 
-	@Override
-	public List<GamePrinter> readAll() {
-		List<GamePrinter> gamePrinters = new ArrayList<>();
-		String sql = "SELECT * FROM GamePrinters";
-		try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-			while (rs.next()) {
-				GamePrinter gamePrinter = new GamePrinter();
-				// Assuming you have setters for these fields or you might directly assign if
-				// they are public
-				gamePrinter.setGamePrinterId(rs.getInt("GamePrinterID"));
-				gamePrinter.setName(rs.getString("Name"));
+        	        Game game = fetchGame(  gameId); // Assuming you can construct a Game like this, or fetch from a repository
+        	       // game.setGameID(gameId); // Setting ID, or more complex fetching logic might be involved
+        	         
+        	        Printer printer = fetchPrinter(printerId); // Assuming you can construct a Printer like this, or fetch from a repository
+        	       // printer.setPrinterID(printerId); // Setting ID, or more complex fetching logic might be involved
 
-				// Here you would typically fetch the associated Game and Printer entities too
-				// This might involve additional repository calls or joins in your original SQL
-				Game game = fetchGame(rs.getInt("GameID")); // Implement fetchGame to retrieve game by ID
-				Printer printer = fetchPrinter(rs.getInt("PrinterID")); // Implement fetchPrinter to retrieve printer by
-																		// ID
+        	        gamePrinter.setGame(game); // Linking the game to the gamePrinter
+        	        gamePrinter.setPrinter(printer); // Linking the printer to the gamePrinter
 
-				gamePrinter.setGame(game);
-				gamePrinter.setPrinter(printer);
+        	        // Now, gamePrinter is populated with the data from the ResultSet row
+        	        // Do something with gamePrinter, like adding it to a list or returning it from a method
+        	        
+        	        gamePrinters.add(gamePrinter);
+        	    }
+        	 
+            
+            
+            LOGGER.info("All GamePrinters fetched.");
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error fetching GamePrinters: " + e.getMessage(), e);
+        }
+        
+        
+        return gamePrinters;
+    }
 
-				// Handle game image data
-				byte[] imgBytes = rs.getBytes("GameImage");
-				if (imgBytes != null) {
-					gamePrinter.setGameImage(imgBytes);
-				}
+ 
+    
+    
+    
+ 
+    public boolean delete(Game game, Printer printer) {
+        String sql = "DELETE FROM GamePrinters WHERE GameID = ? AND PrinterID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, game.getGameID());
+            stmt.setInt(2, printer.getPrinterID());
 
-				gamePrinters.add(gamePrinter);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace(); // Replace with more robust error handling
-		}
-		return gamePrinters;
-	}
-
-	@Override
-	public boolean delete(int gamePrinterId) {
-		String sql = "DELETE FROM GamePrinters WHERE GamePrinterID = ?";
-		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setInt(1, gamePrinterId);
-			int affectedRows = stmt.executeUpdate();
-			return affectedRows > 0;
-		} catch (SQLException e) {
-			e.printStackTrace(); // Replace with more robust error handling
-			return false;
-		}
-	}
-
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                LOGGER.info("GamePrinter deleted successfully.");
+                return true;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error deleting GamePrinter: " + e.getMessage(), e);
+        }
+        return false;
+    }
+ 
 	protected Game fetchGame(int gameId) {
 		return gameRepository.read(gameId); // Implement this in your GameRepository
 	}
@@ -304,4 +287,60 @@ public class GamePrinterRepository implements CRUDRepository<GamePrinter> {
 		return printerRepository.read(printerId); // Implement this in your PrinterRepository
 	}
 
+	 
+	 
+	public GamePrinter read(int gameId, int printerId) {
+	    String sql = "SELECT * FROM GamePrinters WHERE GameID = ? AND PrinterID = ?";
+	    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setInt(1, gameId);
+	        stmt.setInt(2, printerId);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                GamePrinter gamePrinter = new GamePrinter();
+	                // Assuming the GamePrinter class has setters or an appropriate constructor
+	                gamePrinter.setName(rs.getString("Name")); // Example for setting the name
+	                gamePrinter.setGameImage(rs.getBytes("GameImage")); // Example for setting the image
+
+	                // For associated Game and Printer objects, you'd typically have their IDs and possibly fetch them completely from their respective repositories.
+	                // Here's a simplistic approach where we're just creating stub objects with IDs set
+	                Game game = new Game(); // Assuming a Game class exists with a setter for ID
+	                game.setGameID(gameId);
+	                gamePrinter.setGame(game);
+
+	                Printer printer = new Printer(); // Assuming a Printer class exists with a setter for ID
+	                printer.setPrinterID(printerId);
+	                gamePrinter.setPrinter(printer);
+
+	                LOGGER.info("GamePrinter fetched successfully.");
+	                return gamePrinter;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        LOGGER.log(Level.SEVERE, "Error reading GamePrinter: " + e.getMessage(), e);
+	    }
+	    return null;
+	}
+
+
+//	    @Override
+	    public GamePrinter update(GamePrinter gamePrinter) {
+	        String sql = "UPDATE GamePrinters SET Name = ?, GameImage = ? WHERE GameID = ? AND PrinterID = ?";
+	        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+	            stmt.setString(1, gamePrinter.getName());
+	            stmt.setBytes(2, gamePrinter.getGameImage());
+	            stmt.setInt(3, gamePrinter.getGame().getGameID());
+	            stmt.setInt(4, gamePrinter.getPrinter().getPrinterID());
+
+	            int affectedRows = stmt.executeUpdate();
+	            if (affectedRows > 0) {
+	                LOGGER.info("GamePrinter updated successfully.");
+	                return gamePrinter;
+	            }
+	        } catch (SQLException e) {
+	            LOGGER.log(Level.SEVERE, "Error updating GamePrinter: " + e.getMessage(), e);
+	        }
+	        return null;
+	    }
+
+ 
 }
