@@ -1,12 +1,18 @@
 package org.amia.play.ihm.game;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.amia.playground.dao.impl.GameRepository;
 import org.amia.playground.dto.Game;
+import org.amia.playground.utils.ImageUtil;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +29,14 @@ public class GameForm extends JPanel {
 	private JTable gameTable;
 	private GameTableModel tableModel;
 
+	// Constructor and initialization
+		private JLabel gameImageLabel; // For displaying the game image
+		private byte[] gameImage; // Class variable to hold the image data
+		
+		// Constructor and initialization
+		private JLabel gameLogoImageLabel; // For displaying the game image
+		private byte[] gameLogoImage; // Class variable to hold the image data
+	
 	public GameForm(GameRepository gameRepository) {
 		this.gameRepository = gameRepository;
 		setLayout(new BorderLayout());
@@ -41,6 +55,26 @@ public class GameForm extends JPanel {
 		ageRestrictionField = new JComboBox<>(new String[] { "minor", "teen", "adult" });
 		inputPanel.add(ageRestrictionField);
 
+		
+		
+		gameImageLabel = new JLabel();
+		inputPanel.add(gameImageLabel);
+
+		JButton selectGameImageButton = new JButton("Select Image");
+		selectGameImageButton.addActionListener(this:: selectImageGameImage);
+		inputPanel.add(selectGameImageButton);
+		
+		
+		
+		gameLogoImageLabel = new JLabel();
+		inputPanel.add(gameLogoImageLabel);
+
+		JButton selectGameLogoImageButton = new JButton("Select Image");
+		selectGameLogoImageButton.addActionListener(this:: selectImageLogoGameImage);
+		inputPanel.add(selectGameLogoImageButton);
+		
+		
+		
 		JButton deleteButton = new JButton("Delete");
 		deleteButton.addActionListener(this::deleteSelectedGame);
 		inputPanel.add(deleteButton);// , BorderLayout.WEST
@@ -51,6 +85,8 @@ public class GameForm extends JPanel {
 
 		return inputPanel;
 	}
+
+	
 
 	private JScrollPane createTablePanel() {
 		tableModel = new GameTableModel();
@@ -83,7 +119,8 @@ public class GameForm extends JPanel {
 			// Assuming game ID is set automatically or not needed for new creation
 			game.setGameName(gameNameField.getText());
 			game.setAgeRestriction((String) ageRestrictionField.getSelectedItem());
-
+			game.setGameImage(gameImage);
+			game.setLogoImage(gameLogoImage);
 			Game savedGame = gameRepository.create(game);
 			LOGGER.info("Saved game with ID: " + savedGame.getGameID());
 		} catch (Exception e) {
@@ -95,12 +132,56 @@ public class GameForm extends JPanel {
 		loadGameData();
 	}
 
-	// Method to add a game
-	private void addGame(ActionEvent event) {
-		// Implementation for adding a game to the repository and table
-		// ...
-	}
+	private void selectImageGameImage(ActionEvent event) {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes()));
 
+		int option = fileChooser.showOpenDialog(this);
+		if (option == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			try {
+				gameImage = Files.readAllBytes(selectedFile.toPath());
+
+				ImageIcon icon = ImageUtil.resizeImageIcon(new ImageIcon(gameImage), 40, 40);
+				// Optionally, update an image preview
+				gameImageLabel.setIcon(icon);
+
+			} catch (IOException e) {
+				LOGGER.log(Level.SEVERE, "Error reading selected image file", e);
+				JOptionPane.showMessageDialog(this, "Error selecting image: " + e.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+				gameImage = null; // Reset or handle the error as appropriate
+			}
+		}
+	}
+	
+	private void selectImageLogoGameImage(ActionEvent event) {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes()));
+
+		int option = fileChooser.showOpenDialog(this);
+		if (option == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			try {
+				gameLogoImage = Files.readAllBytes(selectedFile.toPath());
+
+				ImageIcon icon = ImageUtil.resizeImageIcon(new ImageIcon(gameLogoImage), 40, 40);
+				// Optionally, update an image preview
+				gameLogoImageLabel.setIcon(icon);
+
+			} catch (IOException e) {
+				LOGGER.log(Level.SEVERE, "Error reading selected image file", e);
+				JOptionPane.showMessageDialog(this, "Error selecting image: " + e.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+				gameLogoImage = null; // Reset or handle the error as appropriate
+			}
+		}
+	}
+	
+	
+ 
 	// Method to load game data into table
 	private void loadGameData() {
 		List<Game> games = gameRepository.readAll();

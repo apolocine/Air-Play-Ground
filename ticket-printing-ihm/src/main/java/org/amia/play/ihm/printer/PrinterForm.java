@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,7 +29,14 @@ public class PrinterForm extends JPanel {
     private static final Logger LOGGER = Logger.getLogger(PrinterForm.class.getName());
 
     // Form components
-    private JTextField nameField;
+ 
+    List<String> printerNames ;
+    JComboBox<String>   printerComboBox ;
+    
+//      printerNames =  org.amia.play.tools.PrinterLister.getPrinters();
+//       printerComboBox  = new JComboBox<>(printerNames.toArray(new String[0]));
+    
+    
     private JTextField locationField;
     private JTextField statusField;
     private JTextArea descriptionArea;
@@ -49,8 +57,14 @@ public class PrinterForm extends JPanel {
         JPanel inputPanel = new JPanel(new GridLayout(0, 2));
 
         inputPanel.add(new JLabel("Name:"));
-        nameField = new JTextField(20);
-        inputPanel.add(nameField);
+    
+      printerNames =  org.amia.play.tools.PrinterLister.getPrintersNotInDB();
+      
+      
+      printerComboBox  = new JComboBox<>(printerNames.toArray(new String[0]));
+      
+      
+        inputPanel.add(printerComboBox);
 
         inputPanel.add(new JLabel("Location:"));
         locationField = new JTextField(20);
@@ -98,7 +112,7 @@ public class PrinterForm extends JPanel {
     private void addPrinter(ActionEvent event) {
         try {
             Printer printer = new Printer();
-            printer.setName(nameField.getText());
+            printer.setName((String) printerComboBox.getSelectedItem());
             printer.setLocation(locationField.getText());
             printer.setStatus(statusField.getText());
             printer.setDescription(descriptionArea.getText());
@@ -114,10 +128,18 @@ public class PrinterForm extends JPanel {
             JOptionPane.showMessageDialog(this, "Error adding printer: " + e.getMessage(),
                                           "Error", JOptionPane.ERROR_MESSAGE);
         }
+        
+        resetForm();
     }
 
     private void loadPrinterData() {
         try {
+        	printerComboBox.removeAllItems();
+        	printerNames =  org.amia.play.tools.PrinterLister.getPrintersNotInDB();
+        	for (String string : printerNames) {
+					printerComboBox.addItem(string);
+			}
+        
             List<Printer> printers = printerRepository.readAll(); // Adapt to your method
             tableModel.setPrinters(printers);
         } catch (Exception e) {
@@ -144,7 +166,15 @@ public class PrinterForm extends JPanel {
             }
         }
     }
-
+    
+    
+void resetForm(){
+	   locationField.setText("");
+	    statusField.setText("");
+	 descriptionArea.setText("");
+	   isActiveCheckBox.setSelected(false);
+	   printerComboBox.setSelectedItem(null);
+}
     
     // Ensure methods handle the printers' details
 }

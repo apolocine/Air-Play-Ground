@@ -63,8 +63,15 @@ CREATE TABLE IF NOT EXISTS   Users (
 CREATE TABLE IF NOT EXISTS   Games (
     GameID INT AUTO_INCREMENT PRIMARY KEY,
     GameName VARCHAR(255) NOT NULL UNIQUE,
+      GameImage MEDIUMBLOB, 
+    LogoImage MEDIUMBLOB,
     AgeRestriction ENUM('minor', 'teen', 'adult') NOT NULL
 );
+
+-- ALTER TABLE Games
+-- ADD GameImage MEDIUMBLOB,
+-- ADD LogoImage MEDIUMBLOB;
+
 
 CREATE TABLE IF NOT EXISTS   Permissions (
     PermissionID INT AUTO_INCREMENT PRIMARY KEY,
@@ -114,4 +121,12 @@ CREATE TABLE IF NOT EXISTS GamePrinters (
     FOREIGN KEY (GameID) REFERENCES Games(GameID)  -- Adjust according to your actual FK constraints
 );
  
+CREATE TABLE GamePricing (
+    PricingID INT AUTO_INCREMENT PRIMARY KEY,
+    GameID INT,
+    Price DECIMAL(10, 2),
+    ValidFrom DATETIME,
+    ValidTo DATETIME,
+    FOREIGN KEY (GameID) REFERENCES Games(GameID)
+);
 

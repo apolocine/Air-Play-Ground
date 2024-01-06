@@ -29,8 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import org.amia.playground.dto.Printer;
-import org.amia.playground.ihm.toobare.PrinterLister;
+import org.amia.playground.dto.Printer; 
 import org.hmd.angio.install.sgbd.DatabaseManager;
 
 import net.coobird.thumbnailator.Thumbnails;
@@ -52,8 +51,8 @@ public class PrinterManager extends JFrame {
         setSize(600, 400);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initUI();
-        Printer newPrinter = new Printer("HP Printer", "Bureau 101", "active");
-        addPrinter(newPrinter);
+//        Printer newPrinter = new Printer("HP Printer", "Bureau 101", "active");
+//        addPrinter(newPrinter);
 
         setVisible(true);
     }
@@ -149,7 +148,7 @@ public class PrinterManager extends JFrame {
         // Créez une boîte de dialogue ou un formulaire personnalisé pour saisir les informations de l'imprimante
         JTextField nameField = new JTextField(20); 
         
-        List<String> printerNames =  PrinterLister.getPrinters();
+        List<String> printerNames =  org.amia.play.tools.PrinterLister.getPrinters();
         JComboBox   printerComboBox  = new JComboBox<>(printerNames.toArray(new String[0]));
 
         JTextField statusField = new JTextField(20);

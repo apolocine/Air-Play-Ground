@@ -45,13 +45,12 @@ public class GamePrinterForm extends JPanel {
 	private JTextField nameField;
 	private JComboBox<Game> gameComboBox;
 	private JComboBox<Printer> printerComboBox;
-	private JLabel imageLabel; // For displaying the game image
-
+	
 	private List<Game> availableGames; // List of all available games
 	private List<Printer> availablePrinters; // List of all available printers
 
 	// Constructor and initialization
-
+	private JLabel imageLabel; // For displaying the game image
 	private byte[] gameImage; // Class variable to hold the image data
 
 	// Table components
@@ -100,14 +99,25 @@ public class GamePrinterForm extends JPanel {
 		JButton deleteButton = new JButton("Delete");
 		deleteButton.addActionListener(this::deleteSelectedGamePrinter);
 		inputPanel.add(deleteButton, BorderLayout.WEST);
-
+		
 		JButton addButton = new JButton("Add");
 		addButton.addActionListener(this::addGamePrinter);
 		inputPanel.add(addButton);
+		
+		inputPanel.add(new JLabel("reload :"));
+		JButton reloadButton = new JButton("reload");
+		reloadButton.addActionListener(this::reload);
+		inputPanel.add(reloadButton);
 
 		return inputPanel;
 	}
-
+	
+	
+	private void reload(ActionEvent event) {
+		loadGamePrinterData();
+		loadAvailableGames();
+		loadAvailablePrinters();
+	}
 	private void selectImage(ActionEvent event) {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setAcceptAllFileFilterUsed(false);

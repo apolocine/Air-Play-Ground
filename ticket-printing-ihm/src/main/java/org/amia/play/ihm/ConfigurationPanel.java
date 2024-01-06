@@ -9,6 +9,7 @@ import org.amia.play.ihm.gameprinter.GamePrinterForm;
 import org.amia.play.ihm.permission.PermissionForm;
 import org.amia.play.ihm.printer.PrinterForm;
 import org.amia.play.ihm.role.RoleForm;
+import org.amia.play.ihm.ticket.TicketForm;
 import org.amia.play.ihm.user.LoginForm;
 import org.amia.play.ihm.user.UserForm;
 import org.amia.playground.dao.impl.GamePrinterRepository;
@@ -38,6 +39,7 @@ public class ConfigurationPanel extends JTabbedPane {
 		addTab("Games", new GameForm(new GameRepository(con)));
 		addTab("Printers", new PrinterForm( new PrinterRepository(con) ));
 		addTab("Games&Printers", new GamePrinterForm( new GamePrinterRepository(con) ,new GameRepository(con),new PrinterRepository(con)));
+		addTab("Ticket Printing", new TicketForm( new GamePrinterRepository(con) ,		new GameRepository(con) ));
 		
         // ... potentially other tabs for more entities ...
     }

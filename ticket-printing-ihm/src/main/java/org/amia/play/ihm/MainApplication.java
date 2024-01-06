@@ -3,7 +3,12 @@ import javax.swing.*;
 
 public class MainApplication extends JFrame {
 
-    public MainApplication() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public MainApplication() {
         // Initialize and set up the main frame
         setTitle("Application Main Frame");
         setSize(800, 600);
