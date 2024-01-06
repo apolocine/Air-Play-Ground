@@ -68,7 +68,7 @@ public class GamePrinterRepository
 
 	public List<Printer> getPrintersForGame(int gameId) {
 		List<Printer> printers = new ArrayList<>();
-		String sql = "SELECT p.* FROM Printers p INNER JOIN GamePrinter gp ON p.PrinterID = gp.PrinterID WHERE gp.GameID = ?";
+		String sql = "SELECT p.* FROM Printers p INNER JOIN GamePrinters gp ON p.PrinterID = gp.PrinterID WHERE gp.GameID = ?";
 
 		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setInt(1, gameId);
@@ -342,5 +342,33 @@ public class GamePrinterRepository
 	        return null;
 	    }
 
- 
+//		public List<GamePrinter> readAllGamesWithoutPrinter() {
+//			// TODO Auto-generated method stub
+//			return null;
+//		}
+
+  
+		 public List<Game> readAllGamesWithPrinter() {
+		        List<Game> gamesWithoutPrinters = new ArrayList<>();
+		        String sql = "SELECT * FROM Games WHERE GameID  IN (SELECT GameID FROM GamePrinters)";
+
+		        try (Statement stmt = conn.createStatement();
+		             ResultSet rs = stmt.executeQuery(sql)) {
+		            
+		            while (rs.next()) {
+		                Game game = new Game(); // Assuming a Game class with appropriate constructor or setters
+		                game.setGameID(rs.getInt("GameID"));
+		                game.setGameName(rs.getString("GameName"));
+		                game.setAgeRestriction(rs.getString("AgeRestriction"));
+		                
+		                // ... set other fields as necessary ...
+
+		                gamesWithoutPrinters.add(game);
+		            }
+		        } catch (SQLException e) {
+		            e.printStackTrace(); // Replace with more robust error handling
+		        }
+		        return gamesWithoutPrinters;
+		    }
+		
 }

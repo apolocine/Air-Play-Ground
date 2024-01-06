@@ -8,20 +8,29 @@ import java.awt.print.Paper;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.sql.Connection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
 import javax.swing.ImageIcon;
 
 import org.amia.playground.dao.impl.GamePrinterRepository;
+import org.amia.playground.dao.impl.GameRepository;
 import org.amia.playground.dao.impl.TicketRepository;
 import org.amia.playground.dto.Game;
 import org.amia.playground.dto.Printer;
 import org.amia.playground.dto.Ticket;
+import org.amia.playground.utils.BarcodeUtil;
 import org.amia.playground.utils.ImageUtil;
+import org.hmd.angio.install.sgbd.DatabaseManager;
 
 import net.coobird.thumbnailator.Thumbnails;
 
@@ -76,10 +85,55 @@ public class TicketService {
 //    }
     
     
+    public static void printTicket(String printerName, String ticketContent) {
+        try {
+            PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+            PrintService myPrinter = null;
+            for (PrintService service : services) {
+                if (service.getName().equalsIgnoreCase(printerName)) {
+                    myPrinter = service;
+                    break;
+                }
+            }
+
+            if (myPrinter != null) {
+                try {
+                    DocPrintJob job = myPrinter.createPrintJob();
+                    byte[] bytes;
+
+                    bytes = ticketContent.getBytes("UTF-8");
+
+                    Doc doc = new SimpleDoc(bytes, DocFlavor.BYTE_ARRAY.AUTOSENSE, null);
+
+                    job.print(doc, null);
+                    
+                } catch (PrintException pe) {
+                    System.err.println("Erreur lors de l'impression : " + pe.getMessage());
+                } catch (Exception e) {
+                    System.err.println("Problème lors de la préparation ou de l'envoi du ticket : " + e.getMessage());
+                }
+            } else {
+                System.out.println("Imprimante non trouvée : " + printerName);
+            }
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la recherche des services d'impression : " + e.getMessage());
+        }
+    }
     
-    public void printTicket(Ticket ticket) {
+    public static void printTicket(Ticket ticket,Game game) {
+    	
+   
+    }
+    
+    public   void printTicket(Ticket ticket) {
         // Define the printer name (ID or name associated with the game)
-    	GamePrinterRepository gamePrinterRepository = new GamePrinterRepository(null);
+    	Connection conn=DatabaseManager.getConnection();
+		GameRepository gamerRepository = new GameRepository(conn);
+		GamePrinterRepository gamePrinterRepository = new GamePrinterRepository(conn);
+		
+		LOGGER.info(""+ticket.getGameId());
+    	Game game = gamerRepository.read(ticket.getGameId());
+    	
     	List<Printer> printers = gamePrinterRepository.getPrintersForGame(ticket.getGameId());
     	Printer printer = null ;
     	if(printers!=null && printers.size()>0 ) {
@@ -119,9 +173,9 @@ public class TicketService {
 
                     // Print the ImageIcon (if available)
                     
-                    if (ticket.getGameImage() != null) {
+                    if (game.getGameImage() != null) {
                         // Assuming getGameImage() returns a path or ImageIcon
-                        byte[] img = ticket.getGameImage() ;  // Get the image from ImageIcon
+                        byte[] img = game.getGameImage() ;  // Get the image from ImageIcon
                         ImageIcon imageIcontmp = new ImageIcon(img);
                         
                          
@@ -163,11 +217,12 @@ public class TicketService {
 
         } catch (PrinterException e) {
             // Handle printing errors here
-        	 LOGGER.log(Level.SEVERE, "Failed to print ticket: " + e.getMessage(), e);
+//        	 LOGGER.log(Level.SEVERE, "Failed to print ticket: " + e.getMessage(), e);
+        	 LOGGER.log(Level.SEVERE, "Failed to print ticket: "  );
         }
     }
 
-    private PrintService findPrintService(String printerName) {
+    private   PrintService findPrintService(String printerName) {
         PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
         for (PrintService printService : printServices) {
             if (printService.getName().trim().equalsIgnoreCase(printerName.trim())) {

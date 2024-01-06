@@ -3,6 +3,10 @@ public class Game {
     private int gameID;
     private String gameName;
     private String ageRestriction;
+    private byte[] gameImage;
+    private byte[] logoImage;
+    
+    
 	public int getGameID() {
 		return gameID;
 	}
@@ -28,6 +32,18 @@ public class Game {
 	}
 	public Game() {
 		// TODO Auto-generated constructor stub
+	}
+	public byte[] getLogoImage() {
+		return logoImage;
+	}
+	public void setLogoImage(byte[] logoImage) {
+		this.logoImage = logoImage;
+	}
+	public byte[] getGameImage() {
+		return gameImage;
+	}
+	public void setGameImage(byte[] gameImage) {
+		this.gameImage = gameImage;
 	}
 
     // Constructors, getters, setters, and methods for CRUD operations

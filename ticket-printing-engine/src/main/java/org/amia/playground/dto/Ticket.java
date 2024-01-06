@@ -1,7 +1,17 @@
 package org.amia.playground.dto;
 
 public class Ticket {
-    public int getTicketId() {
+	
+
+	
+    public Ticket(int gameId) {
+		super();
+		this.gameId = gameId;
+	}
+	public Ticket() {
+		// TODO Auto-generated constructor stub
+	}
+	public int getTicketId() {
 		return ticketId;
 	}
 	public void setTicketId(int ticketId) {
@@ -43,6 +53,10 @@ public class Ticket {
     private String barcode; 
     private byte[] gameImage; // byte array for BLOB data
     private byte[] logoImage; // byte array for BLOB data
-
+@Override
+public boolean equals(Object obj) {
+	Ticket tkt= (Ticket) obj;
+	return this.getGameId()==tkt.getGameId();
+}
     // Constructors, getters, and setters...
 }

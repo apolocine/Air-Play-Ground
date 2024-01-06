@@ -1,6 +1,8 @@
 package org.amia.playground.dao.impl;
 
+import java.math.BigDecimal;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -40,11 +42,13 @@ public class GameRepository implements CRUDRepository<Game> {
 		}
 
 		// Proceed with the creation as the name is unique
-		String sql = "INSERT INTO Games (GameName, AgeRestriction) VALUES (?, ?)";
+		String sql = "INSERT INTO Games (GameName, AgeRestriction, GameImage, LogoImage) VALUES (?, ?, ?, ?)";
 		try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 			stmt.setString(1, game.getGameName());
 			stmt.setString(2, game.getAgeRestriction());
-
+			stmt.setBytes(3, game.getGameImage());
+			stmt.setBytes(4, game.getLogoImage());
+		    
 			int affectedRows = stmt.executeUpdate();
 			if (affectedRows > 0) {
 				try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
@@ -74,6 +78,8 @@ public class GameRepository implements CRUDRepository<Game> {
 				game.setGameID(rs.getInt("GameID"));
 				game.setGameName(rs.getString("GameName"));
 				game.setAgeRestriction(rs.getString("AgeRestriction"));
+			    game.setGameImage(rs.getBytes("GameImage"));
+			    game.setLogoImage(rs.getBytes("LogoImage"));
 				return game;
 			}
 		} catch (SQLException e) {
@@ -93,7 +99,8 @@ public class GameRepository implements CRUDRepository<Game> {
 	                game.setGameID(rs.getInt("GameID"));
 	                game.setGameName(rs.getString("GameName"));
 	                game.setAgeRestriction(rs.getString("AgeRestriction"));
-	                
+	                game.setGameImage(rs.getBytes("GameImage"));
+	                game.setLogoImage(rs.getBytes("LogoImage"));
 	                // ... set other fields as necessary ...
 
 	                gamesWithoutPrinters.add(game);
@@ -104,6 +111,29 @@ public class GameRepository implements CRUDRepository<Game> {
 	        return gamesWithoutPrinters;
 	    }
 	 
+	 public List<Game> readAllGamesWithPrinter() {
+	        List<Game> gamesWithoutPrinters = new ArrayList<>();
+	        String sql = "SELECT * FROM Games WHERE GameID   IN (SELECT GameID FROM GamePrinters)";
+
+	        try (Statement stmt = conn.createStatement();
+	             ResultSet rs = stmt.executeQuery(sql)) {
+	            
+	            while (rs.next()) {
+	                Game game = new Game(); // Assuming a Game class with appropriate constructor or setters
+	                game.setGameID(rs.getInt("GameID"));
+	                game.setGameName(rs.getString("GameName"));
+	                game.setAgeRestriction(rs.getString("AgeRestriction"));
+	                game.setGameImage(rs.getBytes("GameImage"));
+	                game.setLogoImage(rs.getBytes("LogoImage"));
+	                // ... set other fields as necessary ...
+
+	                gamesWithoutPrinters.add(game);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace(); // Replace with more robust error handling
+	        }
+	        return gamesWithoutPrinters;
+	    }
 	@Override
 	public boolean delete(int id) {
 		String sql = "DELETE FROM Games WHERE GameID = ?";
@@ -130,6 +160,8 @@ public class GameRepository implements CRUDRepository<Game> {
 				game.setGameID(rs.getInt("GameID"));
 				game.setGameName(rs.getString("GameName"));
 				game.setAgeRestriction(rs.getString("AgeRestriction"));
+			    game.setGameImage(rs.getBytes("GameImage"));
+			    game.setLogoImage(rs.getBytes("LogoImage"));
 				games.add(game);
 			}
 		} catch (SQLException e) {
@@ -140,12 +172,19 @@ public class GameRepository implements CRUDRepository<Game> {
 
 	@Override
 	public Game update(Game game) {
-		String sql = "UPDATE Games SET GameName = ?, AgeRestriction = ? WHERE GameID = ?";
+		String sql = "UPDATE Games SET GameName = ?, AgeRestriction = ?, GameImage = ?, LogoImage = ? WHERE GameID = ?";
 		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, game.getGameName());
 			stmt.setString(2, game.getAgeRestriction());
-			stmt.setInt(3, game.getGameID());
-
+			
+			stmt.setBytes(3, game.getGameImage());
+			stmt.setBytes(4, game.getLogoImage());
+			
+			
+			stmt.setInt(5, game.getGameID());
+			
+			
+			
 			int affectedRows = stmt.executeUpdate();
 			if (affectedRows > 0) {
 				return game;
@@ -159,6 +198,32 @@ public class GameRepository implements CRUDRepository<Game> {
 		}
 		return null; // or consider throwing an exception
 	}
+	
+	/**
+	 * 
+	 * @param gameID
+	 * @return
+	 */
+	public BigDecimal getCurrentPriceForGame(int gameID) {
+        BigDecimal currentPrice = null;
+        String sql = "SELECT Price FROM GamePricing WHERE GameID = ? AND ValidFrom <= ? AND ValidTo >= ? ORDER BY ValidTo DESC";
+        LocalDateTime now = LocalDateTime.now(); // Capture the current time
 
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, gameID);
+            pstmt.setTimestamp(2, Timestamp.valueOf(now)); // ValidFrom
+            pstmt.setTimestamp(3, Timestamp.valueOf(now)); // ValidTo
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    currentPrice = rs.getBigDecimal("Price");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Proper error handling should replace this
+        }
+
+        return currentPrice; // May return null if no pricing info is found
+    }
 
 }
