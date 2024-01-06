@@ -37,7 +37,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/Install-Config"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Install-init-config"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ticket-printing-engine"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
