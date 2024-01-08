@@ -1,5 +1,6 @@
 package org.hmd.angio;
 
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +36,7 @@ public class ApplicationGUI extends JFrame {
 	 */
 	private static int LOGIN_TAB = 0;
 	private static int DB_INSTALL_TAB = 1;
-	private static int CONFIG_PROPERTIES_TAB = 2;
+	private static int CONFIG_PROPERTIES_TAB = 2; 
 	
 	private static final long serialVersionUID = 1L;
 	private JTextField dbUrlField, usernameField, passwordField;
@@ -387,7 +388,7 @@ public class ApplicationGUI extends JFrame {
 		return panel;
 	}
 
-	private void startApplication() {
+	private   void startApplication() {
 
 		SwingUtilities.invokeLater(() -> {
 			try {
@@ -410,7 +411,7 @@ public class ApplicationGUI extends JFrame {
 			
 		});
 
-		setVisible(false);
+	  setVisible(false);
 
 //        // Mettez ici le code pour démarrer votre application après la connexion réussie
 //        JOptionPane.showMessageDialog(this, "Application démarrée avec succès!", "Succès",
@@ -418,7 +419,7 @@ public class ApplicationGUI extends JFrame {
 //        // Ajoutez ici le code pour le démarrage effectif de votre application
 	}
 
-	private void initClass(String className) throws InvocationTargetException {
+	private static   void initClass(String className) throws InvocationTargetException {
 		Class<?> clazz = null;
 		try {
 		    clazz = Class.forName(className);
@@ -436,6 +437,39 @@ public class ApplicationGUI extends JFrame {
 		}
 	}
 
+	
+	public static   void startApplication(String className,Component comp) {
+
+		SwingUtilities.invokeLater(() -> {
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			//String className = Config.getNameMainClazz(); // Remplacez par le nom complet de votre classe 
+			try {
+				initClass(className);
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+		});
+
+		//  comp.getParent(). setVisible(false);
+
+//        // Mettez ici le code pour démarrer votre application après la connexion réussie
+//        JOptionPane.showMessageDialog(this, "Application démarrée avec succès!", "Succès",
+//                JOptionPane.INFORMATION_MESSAGE);
+//        // Ajoutez ici le code pour le démarrage effectif de votre application
+	}
+
+ 
+	
+	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> new ApplicationGUI());
 	}

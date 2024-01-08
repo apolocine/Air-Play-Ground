@@ -1,4 +1,4 @@
-package org.amia.play.ihm.ticket;
+package org.amia.play.ihm.render;
 
 import java.awt.Component;
 

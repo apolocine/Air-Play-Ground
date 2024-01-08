@@ -21,7 +21,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import org.amia.play.ihm.TicketPrintingIHM;
+import org.amia.play.ihm.render.ApplicationCompRenderer;
 import org.amia.playground.dao.impl.GamePrinterRepository;
 import org.amia.playground.dao.impl.GameRepository;
 import org.amia.playground.dto.GamePrinter;
@@ -77,7 +77,7 @@ public class TicketForm extends JPanel {
 
 		inputPanel.add(new JLabel("Game Restriction:")); 
 
-	   gameSelectionComboBox.setRenderer(new GameSelectionRenderer());  // Custom renderer to show game images
+	   gameSelectionComboBox.setRenderer(new ApplicationCompRenderer());  // Custom renderer to show game images
 	   inputPanel.add(gameSelectionComboBox, BorderLayout.NORTH);
      
 	   

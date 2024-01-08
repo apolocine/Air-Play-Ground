@@ -63,13 +63,13 @@ public class TicketPrintingIHM extends JFrame {
 		  JPanel mainPanel = new JPanel();
 	        mainPanel.setLayout(new GridLayout(6, 2, 10, 10));
 		 JPanel panelAll =  getPanelTicketPrinting(gameRepository);
-     
+		 panelAll.add(ticketPrice);
            getContentPane().add(panelAll);
         
            
           
            
-           getContentPane().add(ticketPrice);
+//           getContentPane().add(ticketPrice);
            
            JButton printButton = new JButton( chooseIcon(ImageUtil.resizeImageIcon(new ImageIcon("files/icons/imprimante01.png"), 70, 70)));  // Use gameIcon1, gameIcon2, or gameIcon3 depending on i
            printButton.addActionListener(e -> printTickets(tickets));
@@ -130,7 +130,15 @@ public class TicketPrintingIHM extends JFrame {
 	 * @param ticketCountField
 	 */
     private   void incrementTicketCount(Game game,JTextField ticketCountField) {
-     BigDecimal price = gameRepository.getCurrentPriceForGame(game.getGameID());
+    	
+    	
+     BigDecimal price = null;
+	try {
+		price = gameRepository.getCurrentPriceForGame(game.getGameID());
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
         System.out.println(price);
          if(price==null) {
         	JOptionPane.showMessageDialog( this,

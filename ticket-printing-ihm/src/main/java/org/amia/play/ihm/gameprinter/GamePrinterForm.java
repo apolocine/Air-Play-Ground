@@ -37,7 +37,7 @@ public class GamePrinterForm extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private final GamePrinterRepository gamePrinterRepository; // Adapt to your GamePrinterRepository
-	private static final Logger LOGGER = Logger.getLogger(GamePrinterForm.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(GamePrinterForm.class.getName()); 
 	private final GameRepository gameRepository;
 	private final PrinterRepository printerRepository;
 
@@ -203,6 +203,23 @@ public class GamePrinterForm extends JPanel {
 		loadAvailableGames();
 		loadAvailablePrinters();
 	}
+	private void deleteSelectedGamePrinter(ActionEvent event) {
+		int row = gamePrinterTable.getSelectedRow();
+		if (row >= 0) {
+			try {
+				GamePrinter gamePrinter = tableModel.getGamePrinterAt(row);
+				boolean deleted = gamePrinterRepository.delete(gamePrinter.getGame(), gamePrinter.getPrinter());
+				if (deleted) {
+					tableModel.removeGamePrinter(row);
+					LOGGER.info("Game-Printer association deleted successfully.");
+				}
+			} catch (Exception e) {
+				LOGGER.log(Level.SEVERE, "Error deleting game-printer association: " + e.getMessage(), e);
+				JOptionPane.showMessageDialog(this, "Error deleting game-printer association: " + e.getMessage(),
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
 
 	private void loadGamePrinterData() {
 		try {
@@ -245,23 +262,6 @@ public class GamePrinterForm extends JPanel {
 		}
 	}
 
-	private void deleteSelectedGamePrinter(ActionEvent event) {
-		int row = gamePrinterTable.getSelectedRow();
-		if (row >= 0) {
-			try {
-				GamePrinter gamePrinter = tableModel.getGamePrinterAt(row);
-				boolean deleted = gamePrinterRepository.delete(gamePrinter.getGame(), gamePrinter.getPrinter());
-				if (deleted) {
-					tableModel.removeGamePrinter(row);
-					LOGGER.info("Game-Printer association deleted successfully.");
-				}
-			} catch (Exception e) {
-				LOGGER.log(Level.SEVERE, "Error deleting game-printer association: " + e.getMessage(), e);
-				JOptionPane.showMessageDialog(this, "Error deleting game-printer association: " + e.getMessage(),
-						"Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-	}
-
+	
 	// Ensure methods handle the game and printer associations and game images
 }

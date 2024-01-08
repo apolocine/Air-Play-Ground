@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -19,6 +22,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
+import org.amia.play.ihm.render.ApplicationCompRenderer;
+import org.amia.playground.dao.impl.RoleRepository;
 import org.amia.playground.dao.impl.UserRepository;
 import org.amia.playground.dto.Role;
 import org.amia.playground.dto.User;
@@ -29,6 +34,7 @@ public class UserForm extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private final UserRepository userRepository; // Adapt to your UserRepository
+//	private final RoleRepository roleRepository; // Adapt to your UserRepository
     private static final Logger LOGGER = Logger.getLogger(UserForm.class.getName());
 
     // Form components
@@ -40,8 +46,9 @@ public class UserForm extends JPanel {
     private JTable userTable;
     private UserTableModel tableModel;
 
-    public UserForm(UserRepository userRepository) {
+    public UserForm(UserRepository userRepository/*,RoleRepository roleRepository*/) {
         this.userRepository = userRepository;
+//        this.roleRepository = roleRepository;
         setLayout(new BorderLayout());
         add(createInputPanel(), BorderLayout.NORTH);
         add(createTablePanel(), BorderLayout.CENTER);
@@ -58,16 +65,24 @@ public class UserForm extends JPanel {
         passwordField = new JPasswordField(20);
         inputPanel.add(passwordField);
 
-        inputPanel.add(new JLabel("Roles:"));
+        inputPanel.add(new JLabel("Roles:")); 
         
-        roleList = new JList<>(/* Populate with available roles */);
+        List<Role> roles= userRepository.readAllRoles(); 
+        // Initialiser roleList avec les rôles disponibles
+        roleList = new JList<>(new DefaultListModel<>());
+        roleList.setCellRenderer(new ApplicationCompRenderer());
+        for (Role role : roles) {
+            ((DefaultListModel<Role>) roleList.getModel()).addElement(role);
+        }
         roleList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        JScrollPane roleScrollPane = new JScrollPane(roleList);
-        inputPanel.add(roleScrollPane);
+         
+        
+       // JScrollPane roleScrollPane = new JScrollPane(roleList);
+        inputPanel.add(roleList);
 
         JButton deleteButton = new JButton("Delete");
         deleteButton.addActionListener(this::deleteSelectedUser);
-        inputPanel.add(deleteButton, BorderLayout.WEST);
+        inputPanel.add(deleteButton );
         
         
         JButton addButton = new JButton("Add");
@@ -109,10 +124,17 @@ public class UserForm extends JPanel {
             User user = new User();
             user.setName(nameField.getText());
             user.setPassword(new String(passwordField.getPassword())); // Consider hashing this!
-            List<Role> selectedRoles = roleList.getSelectedValuesList();
-            user.setRoles(selectedRoles);
+            
 
-            userRepository.create(user);
+            User userUrent=  userRepository.create(user);
+            
+            
+            List<Role> selectedRoles = roleList.getSelectedValuesList();
+            for (Role role : selectedRoles) {
+				userRepository.addRoleToUser(userUrent.getUserID(), role.getRoleID());
+			}
+            
+            
             loadUserData(); // Refresh the user data in the table
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error adding user: " + e.getMessage(), e);

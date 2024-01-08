@@ -72,7 +72,7 @@ public class UserTableModel extends AbstractTableModel {
         switch (columnIndex) {
             case 0: return user.getUserID();
             case 1: return user.getName();
-            case 2: return rolesToString(user.getRoles()); // Convert roles list to String
+            case 2: return "";//rolesToString(user.getRoles()); // Convert roles list to String
             default: return null;
         }
     }

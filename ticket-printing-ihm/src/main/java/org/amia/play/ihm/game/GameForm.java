@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 public class GameForm extends JPanel {
 	private final GameRepository gameRepository;
-	private static final Logger LOGGER = Logger.getLogger(GameForm.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(GameForm.class.getName()); 
 
 	// Form components
 	private JTextField gameNameField;

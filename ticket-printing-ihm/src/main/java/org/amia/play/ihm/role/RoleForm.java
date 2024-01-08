@@ -57,8 +57,9 @@ public class RoleForm extends JPanel {
 		inputPanel.add(new JLabel("Permissions:"));
 		permissionList = new JList<>(/* Populate with available permissions */);
 		permissionList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		JScrollPane listScroller = new JScrollPane(permissionList);
-		inputPanel.add(listScroller);
+		
+//		JScrollPane listScroller = new JScrollPane(permissionList);
+		inputPanel.add(permissionList);
 
 		JButton deleteButton = new JButton("Delete");
 		deleteButton.addActionListener(this::deleteSelectedRole);

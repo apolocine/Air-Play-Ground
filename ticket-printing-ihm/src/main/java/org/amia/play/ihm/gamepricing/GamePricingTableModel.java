@@ -14,11 +14,19 @@ public class GamePricingTableModel extends AbstractTableModel {
 	private final String[] columnNames = {"Game", "Price", "Valid From", "Valid To"};
     private List<GamePricing> pricings; // Liste des objets GamePricing
 
-    public GamePricingTableModel(List<GamePricing> pricings) {
+    public GamePricingTableModel(List<GamePricing> pricings) { 
         this.pricings = pricings;
     }
+    
+    
 
-    @Override
+    public GamePricingTableModel() {
+		super();
+	}
+
+
+
+	@Override
     public int getRowCount() {
         return pricings.size();
     }
@@ -71,6 +79,12 @@ public class GamePricingTableModel extends AbstractTableModel {
         pricings = new ArrayList<>(newPricings); // Remplace les données existantes par les nouvelles
         fireTableDataChanged(); // Notifie le tableau que toutes les données ont été modifiées
     }
+
+
+
+	public GamePricing getGamePricingAt(int rowIndex) {
+		  return pricings.get(rowIndex);
+	}
 
     
 

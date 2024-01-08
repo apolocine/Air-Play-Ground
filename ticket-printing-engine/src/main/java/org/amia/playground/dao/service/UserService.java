@@ -22,23 +22,7 @@ public class UserService {
 
     // Authenticate a user
     public User authenticateUser(String username, String password) {
-        try {
-            // Retrieve the user by username
-            User user = userRepository.findByUsername(username);
-            if (user != null && BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
-                
-                List<Role> roles = userRepository.getRolesForUser(user.getUserID());
-                user.setRoles(roles);
-                return user; // User is authenticated
-                
-                
-            } else {
-                throw new AuthenticationException("Invalid username or password");
-            }
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Authentication failed", e);
-            throw new RuntimeException("Authentication failed", e);
-        }
+       return  this.userRepository.authenticateUser(  username,   password) ;
     }
     
     

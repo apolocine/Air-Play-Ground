@@ -39,12 +39,12 @@ public class GamePricingRepository {
     
     public void updateGamePricing(GamePricing gamePricing) {
         String sql = "UPDATE GamePricing SET Price = ?, ValidFrom = ?, ValidTo = ? WHERE PricingID = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) { 
             pstmt.setBigDecimal(1, gamePricing.getPrice());
             pstmt.setTimestamp(2, Timestamp.valueOf(gamePricing.getValidFrom()));
             pstmt.setTimestamp(3, Timestamp.valueOf(gamePricing.getValidTo()));
             pstmt.setInt(4, gamePricing.getPricingId());
-            
+             
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
                 LOGGER.info("Pricing updated successfully for PricingID: " + gamePricing.getPricingId());
@@ -55,7 +55,7 @@ public class GamePricingRepository {
             LOGGER.log(Level.SEVERE, "Error updating pricing for PricingID: " + gamePricing.getPricingId(), e);
         }
     }
-    public void deleteGamePricing(int pricingId) {
+    public boolean deleteGamePricing(int pricingId) {
         String sql = "DELETE FROM GamePricing WHERE PricingID = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, pricingId);
@@ -63,15 +63,18 @@ public class GamePricingRepository {
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
                 LOGGER.info("Pricing deleted successfully for PricingID: " + pricingId);
+                return true;
             } else {
                 LOGGER.warning("No pricing was found (and thus deleted) for PricingID: " + pricingId);
+                return false;
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error deleting pricing for PricingID: " + pricingId, e);
         }
+        return false;
     }
 
-    public List<GamePricing> getAllPricing() {
+    public List<GamePricing> readAll() {
         List<GamePricing> pricings = new ArrayList<>();
         String sql = "SELECT * FROM GamePricing";
         try (Statement stmt = conn.createStatement();

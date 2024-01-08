@@ -213,7 +213,7 @@ public class GameRepository implements CRUDRepository<Game> {
             pstmt.setInt(1, gameID);
             pstmt.setTimestamp(2, Timestamp.valueOf(now)); // ValidFrom
             pstmt.setTimestamp(3, Timestamp.valueOf(now)); // ValidTo
-
+LOGGER.info(pstmt.toString());
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     currentPrice = rs.getBigDecimal("Price");

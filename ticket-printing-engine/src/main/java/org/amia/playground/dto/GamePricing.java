@@ -19,7 +19,7 @@ public class GamePricing {
     		LocalDateTime validFrom,
     		LocalDateTime validTo) {
         //this.pricingId = pricingId;
-        this.gameID = gameId;
+        this.gameID = gameId; 
         this.price = price;
         this.validFrom = validFrom;
         this.validTo = validTo;

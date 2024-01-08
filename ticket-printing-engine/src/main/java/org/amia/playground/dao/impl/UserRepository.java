@@ -9,9 +9,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.naming.AuthenticationException;
+
 import org.amia.playground.dao.CRUDRepository;
 import org.amia.playground.dto.Role;
 import org.amia.playground.dto.User;
+import org.amia.playground.dto.UserRole;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
@@ -24,7 +27,26 @@ public class UserRepository implements CRUDRepository<User> {
         this.conn = conn;
     }
 
-  
+    // Authenticate a user
+    public User authenticateUser(String username, String password) {
+        try {
+            // Retrieve the user by username
+            User user = findByUsername(username);
+            if (user != null && BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
+                
+                List<Role> roles = getRolesForUser(user.getUserID());
+                user.setRoles(roles);
+                return user; // User is authenticated
+                
+                
+            } else {
+                throw new AuthenticationException("Invalid username or password");
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Authentication failed", e);
+            throw new RuntimeException("Authentication failed", e);
+        }
+    }
     
     
     @Override
@@ -91,6 +113,7 @@ public class UserRepository implements CRUDRepository<User> {
                 User user = new User();
                 user.setUserID(rs.getInt("UserID"));
                 user.setName(rs.getString("Name"));
+                
                 user.setPassword(rs.getString("Password")); // Remember this is hashed!
                 users.add(user);
             }
@@ -105,7 +128,10 @@ public class UserRepository implements CRUDRepository<User> {
         String sql = "UPDATE Users SET Name = ?, Password = ? WHERE UserID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, user.getName());
-            stmt.setString(2, user.getPassword()); // Ensure this password is hashed!
+            String hashedPassword = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
+            
+            
+            stmt.setString(2, hashedPassword); // Ensure this password is hashed!
             stmt.setInt(3, user.getUserID());
 
             int affectedRows = stmt.executeUpdate();
@@ -172,6 +198,47 @@ public class UserRepository implements CRUDRepository<User> {
         return roles;
     }
  
+    public List<Role> readAllRoles() {
+        List<Role> roles = new ArrayList<>();
+        String sql = "SELECT * FROM Roles ";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Role role = new Role();
+                role.setRoleID(rs.getInt("RoleID"));
+                role.setRoleName(rs.getString("RoleName"));
+                roles.add(role);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting roles for user", e);
+        }
+        return roles;
+    }
+    
+    
+    public List<Role> getRoles(int userId) {
+        List<Role> roles = new ArrayList<>();
+        String sql = "SELECT r.RoleID, r.RoleName FROM Roles r " +
+                     "JOIN UserRoles ur ON r.RoleID = ur.RoleID " +
+                     "WHERE ur.UserID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Role role = new Role();
+                role.setRoleID(rs.getInt("RoleID"));
+                role.setRoleName(rs.getString("RoleName"));
+                roles.add(role);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error getting roles for user", e);
+        }
+        return roles;
+    }
+    
     
     public void addRoleToUser(int userId, int roleId) {
         // First, check if the user-role combination already exists
@@ -240,16 +307,49 @@ public class UserRepository implements CRUDRepository<User> {
 
     
     
-    public void removeRoleFromUser(int userId, int roleId) {
+    public boolean removeRoleFromUser(int userId, int roleId) {
         String sql = "DELETE FROM UserRoles WHERE UserID = ? AND RoleID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             stmt.setInt(2, roleId);
             stmt.executeUpdate();
+            
+            return true ;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error removing role from user", e);
         }
+        return false;
+        
     }
 
+    public void clearRolesForUser(int userId) {
+    	List<Role> roles = getRoles(  userId);
+    	 for (Role role : roles) {
+				removeRoleFromUser(  userId, role.getRoleID()) ; 
+		}
+    
+    }
+
+	public List<UserRole> readAllUserRole() {
+	     List<UserRole> userRoles = new ArrayList<>();
+	        String sql = "SELECT * FROM UserRoles ";
+	        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        
+	            ResultSet rs = stmt.executeQuery();
+
+	            while (rs.next()) {
+	            	UserRole userRole = new UserRole();
+	            	userRole.setUserID(rs.getInt("UserID"));;
+	            	userRole.setRoleID(rs.getInt("RoleID"));
+	            	userRoles.add(userRole);
+	            }
+	        } catch (SQLException e) {
+	            LOGGER.log(Level.SEVERE, "Error getting roles for user", e);
+	        }
+	        return userRoles;
+	}
+
 	 
+
+   
 }
