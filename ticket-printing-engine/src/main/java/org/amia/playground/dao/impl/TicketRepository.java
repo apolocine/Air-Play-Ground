@@ -1,33 +1,38 @@
 package org.amia.playground.dao.impl;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.amia.playground.dao.CRUDRepository;
+import org.amia.playground.dto.Game;
+import org.amia.playground.dto.GamePricing;
 import org.amia.playground.dto.Ticket;
 
 public class TicketRepository implements CRUDRepository<Ticket> {
     private final Connection conn;
     private static final Logger LOGGER = Logger.getLogger(TicketRepository.class.getName());
 
+     
+     
     public TicketRepository(Connection conn) {
         this.conn = conn;
     }
  // Create a new ticket
     public Ticket create(Ticket ticket) {
-        String sql = "INSERT INTO Tickets (GameID, Price, Barcode, GameImage, LogoImage) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Tickets (GameID, GamePricingID,  Barcode ) VALUES (?, ?, ? )";
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, ticket.getGameId());
-            stmt.setDouble(2, ticket.getPrice());
-            stmt.setString(3, ticket.getBarcode());
-            stmt.setBytes(4, ticket.getGameImage());
-            stmt.setBytes(5, ticket.getLogoImage());
+            stmt.setInt(1, ticket.getGameID());
+            stmt.setInt(2, ticket.getGamePricingID()); 
+            stmt.setString(3, ticket.getBarcode()); 
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {
@@ -57,11 +62,9 @@ public class TicketRepository implements CRUDRepository<Ticket> {
             if (rs.next()) {
                 Ticket ticket = new Ticket();
                 ticket.setTicketId(rs.getInt("TicketID"));
-                ticket.setGameId(rs.getInt("GameID"));
-                ticket.setPrice(rs.getDouble("Price"));
-                ticket.setBarcode(rs.getString("Barcode"));
-                ticket.setGameImage(rs.getBytes("GameImage"));
-                ticket.setLogoImage(rs.getBytes("LogoImage"));
+                ticket.setGameID(rs.getInt("GameID"));
+                ticket.setGamePricingID(rs.getInt("GamePricingID")); 
+                ticket.setBarcode(rs.getString("Barcode")); 
                 return ticket;
             }
         } catch (SQLException e) {
@@ -90,10 +93,12 @@ public class TicketRepository implements CRUDRepository<Ticket> {
 
     @Override
     public Ticket update(Ticket ticket) {
-        String sql = "UPDATE Tickets SET GameID = ?, Price = ?, Barcode = ?, GameImage = ?, LogoImage = ? WHERE TicketID = ?";
+        String sql = "UPDATE Tickets SET GameID = ?, GamePricingID = ?, Barcode = ?  WHERE TicketID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            // Set parameters
-            // ...
+        	 stmt.setInt(1, ticket.getGameID());
+             stmt.setInt(2, ticket.getGamePricingID()); 
+             stmt.setString(3, ticket.getBarcode()); 
+             stmt.setInt(4, ticket.getTicketId()); 
 
             stmt.executeUpdate();
             return ticket;
@@ -115,6 +120,120 @@ public class TicketRepository implements CRUDRepository<Ticket> {
             return false;
         }
     }
+    
+    
+  
+    
+	 public List<GamePricing> getGamePricingByGameAndCurrentDate(int gameId) {
+	        List<GamePricing> pricings = new ArrayList<>();
+	     //   String sql = "SELECT * FROM GamePricing WHERE GameID = ? AND ValidFrom <= ? AND ValidTo >= ?";
+	        String sql = "SELECT GamePricing.* FROM GamePricing JOIN Tickets ON GamePricing.PricingID = Tickets.GamePricingID WHERE Tickets.TicketID = ?";
+	        
+	        LocalDateTime now = LocalDateTime.now();
+
+	        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	            pstmt.setInt(1, gameId);
+	            pstmt.setTimestamp(2, Timestamp.valueOf(now));
+	            pstmt.setTimestamp(3, Timestamp.valueOf(now));
+
+	            try (ResultSet rs = pstmt.executeQuery()) {
+	                while (rs.next()) {
+	                    GamePricing pricing = new GamePricing(
+	                      //  rs.getInt("PricingID"),
+	                        gameId,
+	                        rs.getBigDecimal("Price"),
+	                        rs.getTimestamp("ValidFrom").toLocalDateTime(),
+	                        rs.getTimestamp("ValidTo").toLocalDateTime()
+	                    );
+	                    pricing.setPricingId(rs.getInt("PricingID"));
+	                    pricings.add(pricing);
+	                }
+	            }
+	        } catch (SQLException e) {
+	            // Gestion des exceptions et logging
+	            LOGGER.log(Level.SEVERE, "Error fetching current game pricing for GameID: " + gameId, e);
+	            // Vous pourriez relancer ou gérer l'exception selon votre logique d'application
+	        }
+
+	        return pricings;
+	    }
+	
+	 
+	 
+	 public BigDecimal  getPriceByTicket(int ticketID) {
+	  BigDecimal currentPrice = null;
+	  String sql = "SELECT GamePricing.Price FROM GamePricing JOIN Tickets ON GamePricing.PricingID = Tickets.GamePricingID WHERE Tickets.TicketID = ?";
+       
+      try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+          pstmt.setInt(1, ticketID);
+           
+          try (ResultSet rs = pstmt.executeQuery()) {
+              if (rs.next()) {
+                  currentPrice = rs.getBigDecimal("Price");
+              }
+          }
+      } catch (SQLException e) {
+          e.printStackTrace(); // Proper error handling should replace this
+      }
+
+      return currentPrice; // May return null if no pricing info is found
+      
+      
+}
+//	 public BigDecimal  getPriceByTicket(int gameId) {
+//	        List<GamePricing> pricings = new ArrayList<>();
+//	     //   String sql = "SELECT * FROM GamePricing WHERE GameID = ? AND ValidFrom <= ? AND ValidTo >= ?";
+//	        String sql = "SELECT GamePricing.Price FROM GamePricing JOIN Tickets ON GamePricing.PricingID = Tickets.GamePricingID WHERE Tickets.TicketID = ?";
+//	        
+//	        LocalDateTime now = LocalDateTime.now();
+//
+//	        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//	            pstmt.setInt(1, gameId);
+//	            pstmt.setTimestamp(2, Timestamp.valueOf(now));
+//	            pstmt.setTimestamp(3, Timestamp.valueOf(now));
+//
+//	            try (ResultSet rs = pstmt.executeQuery()) {
+//	                while (rs.next()) {
+//	                    GamePricing pricing = new GamePricing(
+//	                      //  rs.getInt("PricingID"),
+//	                        gameId,
+//	                        rs.getBigDecimal("Price"),
+//	                        rs.getTimestamp("ValidFrom").toLocalDateTime(),
+//	                        rs.getTimestamp("ValidTo").toLocalDateTime()
+//	                    );
+//	                    pricing.setPricingId(rs.getInt("PricingID"));
+//	                    pricings.add(pricing);
+//	                }
+//	            }
+//	        } catch (SQLException e) {
+//	            // Gestion des exceptions et logging
+//	            LOGGER.log(Level.SEVERE, "Error fetching current game pricing for GameID: " + gameId, e);
+//	            // Vous pourriez relancer ou gérer l'exception selon votre logique d'application
+//	        }
+//
+//	        return pricings;
+//	    }
+//	 
+	public Game getGameByTicket(int id) {
+		  String sql = "SELECT Games.* FROM Games JOIN Tickets ON Games.GameID = Tickets.GameID WHERE Tickets.TicketID = ?";
+	      try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				Game game = new Game();
+				game.setGameID(rs.getInt("GameID"));
+				game.setGameName(rs.getString("GameName"));
+				game.setAgeRestriction(rs.getString("AgeRestriction"));
+			    game.setGameImage(rs.getBytes("GameImage"));
+			    game.setLogoImage(rs.getBytes("LogoImage"));
+				return game;
+			}
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error reading game with ID: " + id, e);
+		}
+		return null; // or consider throwing an exception
+	}
 }
 
 

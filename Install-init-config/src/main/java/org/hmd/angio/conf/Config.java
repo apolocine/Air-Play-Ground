@@ -19,15 +19,33 @@ public class Config {
 	 static {
 	        properties = new Properties();
 	        addDefaultProperties() ;
-	             
+	     // APPROACH 1.
+//    		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	        // APPROACH 2.    
+//	        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	     // APPROACH 3.
+//    		ClassLoader classLoader = Config.getClass().getClassLoader();
 	        try (
-	        		//InputStream input = AppConfig.class.getClassLoader().getResourceAsStream(CONFIG_FILE)
-	        		InputStream input = new FileInputStream(CONFIG_FILE)
+//	        		InputStream input = Config.class.getClassLoader().getResourceAsStream(CONFIG_FILE);
+	        		InputStream inputStream = new FileInputStream(CONFIG_FILE)
+	        		
+	        		
+	        		// APPROACH 1.
+//	        		InputStream inputStream = Config.getClass().getClassLoader().getResourceAsStream(CONFIG_FILE);
+
+	        		// APPROACH 2.
+//	        		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+//	        		InputStream inputStream = classLoader.getResourceAsStream(CONFIG_FILE)
+//
+//	        		// APPROACH 3.
+//	        		ClassLoader classLoader = getClass().getClassLoader();
+//	        		InputStream inputStream = classLoader.getResourceAsStream(CONFIG_FILE);
+	        		
 	        		
 	        		) {
 	        	
 	        	
-	            properties.load(input);
+	            properties.load(inputStream);
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
@@ -69,7 +87,7 @@ public class Config {
         
         properties.setProperty("db.sgbd", "jdbc:mysql://localhost:3306/");
         
-        properties.setProperty("db.url", "jdbc:mysql://localhost:3306/dbangiographie");
+        properties.setProperty("db.url", "jdbc:mysql://localhost:3306/dbprinters");
         properties.setProperty("db.user", "root");
         properties.setProperty("db.password", "");
         
@@ -82,7 +100,7 @@ public class Config {
         
       
         		
-        properties.setProperty("db.name", "dbangiographie");
+        properties.setProperty("db.name", "dbprinters");
         properties.setProperty("db.tb.name", "tb_utilisateur");
         
         properties.setProperty("username", "drmdh@msn.com");
@@ -91,6 +109,9 @@ public class Config {
         properties.setProperty("adresse.cabinet", "\\ Cit\\u00E9 50 Logements Mesra Mostaganem");
 
         properties.setProperty("main-class", "org.amia.playground.PrinterManager");
+        
+        properties.setProperty("login-main-class", "org.amia.play.ihm.LoginFormMain");
+        
         properties.setProperty("sql-file-path", "files\\install.sql");
         properties.setProperty("sql-dump-file", "files\\dumpfile.sql");
         
@@ -173,6 +194,12 @@ public class Config {
 	public static String getSqlDumpFilePath() {
 		// TODO Auto-generated method stub
 		return  properties.getProperty("sql-dump-file"); 
+	}
+	
+	//org.amia.play.ihm.LoginFormMain
+	public static String getLoginClassNameMainClazz() {
+		
+		  return  properties.getProperty("login-main-class"); 
 	}
 	
 }

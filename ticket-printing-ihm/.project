@@ -3,6 +3,8 @@
 	<name>ticket-printing-ihm</name>
 	<comment></comment>
 	<projects>
+		<project>Install-init-config</project>
+		<project>ticket-printing-engine</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

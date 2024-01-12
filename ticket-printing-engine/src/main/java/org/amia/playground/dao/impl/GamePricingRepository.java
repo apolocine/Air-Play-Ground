@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -97,6 +98,43 @@ public class GamePricingRepository {
         return pricings;
     }
 
-    
+    /**
+	 * 
+	 * @param gameID
+	 * @return
+	 */
+
+	 public List<GamePricing> getGamePricingByGameAndCurrentDate(int gameId) {
+	        List<GamePricing> pricings = new ArrayList<>();
+	        String sql = "SELECT * FROM GamePricing WHERE GameID = ? AND ValidFrom <= ? AND ValidTo >= ?";
+	        LocalDateTime now = LocalDateTime.now();
+
+	        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	            pstmt.setInt(1, gameId);
+	            pstmt.setTimestamp(2, Timestamp.valueOf(now));
+	            pstmt.setTimestamp(3, Timestamp.valueOf(now));
+
+	            try (ResultSet rs = pstmt.executeQuery()) {
+	                while (rs.next()) {
+	                    GamePricing pricing = new GamePricing(
+	                      //  rs.getInt("PricingID"),
+	                        gameId,
+	                        rs.getBigDecimal("Price"),
+	                        rs.getTimestamp("ValidFrom").toLocalDateTime(),
+	                        rs.getTimestamp("ValidTo").toLocalDateTime()
+	                    );
+	                    pricing.setPricingId(rs.getInt("PricingID"));
+	                    pricings.add(pricing);
+	                }
+	            }
+	        } catch (SQLException e) {
+	            // Gestion des exceptions et logging
+	            LOGGER.log(Level.SEVERE, "Error fetching current game pricing for GameID: " + gameId, e);
+	            // Vous pourriez relancer ou gérer l'exception selon votre logique d'application
+	        }
+
+	        return pricings;
+	    }
+	
     // Assurez-vous d'implémenter des méthodes pour gérer tous les aspects de GamePricing.
 }

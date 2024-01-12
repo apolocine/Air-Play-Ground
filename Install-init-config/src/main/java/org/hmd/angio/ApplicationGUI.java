@@ -79,8 +79,9 @@ public class ApplicationGUI extends JFrame {
 		if ( isConnectedToDB()) {
 
 			
-			if (isUserTableExiste()) {
-				tabbedPane.setSelectedIndex(LOGIN_TAB);
+			if (isUserTableExiste()) { 
+			 
+ 				tabbedPane.setSelectedIndex(LOGIN_TAB); 
 				
 			}else  {
 				
@@ -208,7 +209,10 @@ public class ApplicationGUI extends JFrame {
 
 				if (dbConnectionSuccessful) {
 					// Si la connexion réussit, vous pouvez démarrer l'application ici
-					startApplication();
+				//	startApplication();
+					
+					startLoginFormApplication();
+					
 			} else {
 					tabbedPane.setSelectedIndex(0); // Si la connexion échoue, basculez vers l'onglet de connexion
 					messageLabel.setText("wrong username or password");
@@ -317,7 +321,12 @@ public class ApplicationGUI extends JFrame {
 						 e2.printStackTrace();
 					}
 					 finally {
+						 
+						 
 						 tabbedPane.setSelectedIndex(LOGIN_TAB);
+						 
+						 
+						 
 					}
 					 
              
@@ -437,6 +446,36 @@ public class ApplicationGUI extends JFrame {
 		}
 	}
 
+	private   void startLoginFormApplication() {
+
+		SwingUtilities.invokeLater(() -> {
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			String className = Config.getLoginClassNameMainClazz(); // Remplacez par le nom complet de votre classe
+			
+			///  String className = "org.hmd.angio.PhotoOrganizerApp"; // Remplacez par le nom complet de votre classe
+			try {
+				initClass(className);
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+		});
+
+	  setVisible(false);
+
+//        // Mettez ici le code pour démarrer votre application après la connexion réussie
+//        JOptionPane.showMessageDialog(this, "Application démarrée avec succès!", "Succès",
+//                JOptionPane.INFORMATION_MESSAGE);
+//        // Ajoutez ici le code pour le démarrage effectif de votre application
+	}
 	
 	public static   void startApplication(String className,Component comp) {
 

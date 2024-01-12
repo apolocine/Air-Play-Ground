@@ -2,11 +2,13 @@ package org.amia.playground.dto;
 
 public class Ticket {
 	
-
-	
+	private int ticketId;
+	private int gamePricingID;
+    private int gameID; 
+    private String barcode;  
     public Ticket(int gameId) {
 		super();
-		this.gameId = gameId;
+		this.gameID = gameId;
 	}
 	public Ticket() {
 		// TODO Auto-generated constructor stub
@@ -17,46 +19,28 @@ public class Ticket {
 	public void setTicketId(int ticketId) {
 		this.ticketId = ticketId;
 	}
-	public int getGameId() {
-		return gameId;
+	public int getGameID() {
+		return gameID;
 	}
-	public void setGameId(int gameId) {
-		this.gameId = gameId;
-	}
-	public double getPrice() {
-		return price;
-	}
-	public void setPrice(double price) {
-		this.price = price;
-	}
+	public void setGameID(int gameId) {
+		this.gameID = gameId;
+	} 
 	public String getBarcode() {
 		return barcode;
 	}
 	public void setBarcode(String barcode) {
 		this.barcode = barcode;
-	}
-	public byte[] getGameImage() {
-		return gameImage;
-	}
-	public void setGameImage(byte[] gameImage) {
-		this.gameImage = gameImage;
-	}
-	public byte[] getLogoImage() {
-		return logoImage;
-	}
-	public void setLogoImage(byte[] logoImage) {
-		this.logoImage = logoImage;
-	}
-	private int ticketId;
-    private int gameId;
-    private double price;
-    private String barcode; 
-    private byte[] gameImage; // byte array for BLOB data
-    private byte[] logoImage; // byte array for BLOB data
+	} 
 @Override
 public boolean equals(Object obj) {
 	Ticket tkt= (Ticket) obj;
-	return this.getGameId()==tkt.getGameId();
+	return this.getGameID()==tkt.getGameID();
 }
-    // Constructors, getters, and setters...
+public int getGamePricingID() {
+	return gamePricingID;
+}
+public void setGamePricingID(int gamePricingID) {
+	this.gamePricingID = gamePricingID;
+}
+  
 }

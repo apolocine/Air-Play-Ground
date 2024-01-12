@@ -25,7 +25,7 @@ public class DatabaseManager {
 	public static Connection getConnection(String sgbdurl, String databaseUser, String databasePassword) throws Exception {
 	    return DriverManager.getConnection(sgbdurl, databaseUser, databasePassword);
 	}
-    
+     
     
     
     
