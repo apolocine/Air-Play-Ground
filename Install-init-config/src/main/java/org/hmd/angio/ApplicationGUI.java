@@ -1,6 +1,8 @@
 package org.hmd.angio;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -178,8 +180,20 @@ public class ApplicationGUI extends JFrame {
 	
 	private JPanel createTab1() {
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(3, 2));
-
+		panel.setLayout(new GridLayout(4, 2));
+		JLabel title = new JLabel("Vérification de l'install ");
+		title.setForeground(Color.RED);
+		title.setBackground(Color.GREEN);
+		title.setSize(30, 30);
+		JLabel title2 = new JLabel("de l'aplicatin");
+		title2.setForeground(Color.RED);
+		title2.setBackground(Color.GREEN);
+		
+		panel.add(title);
+		
+		panel.add(title2);
+		
+		
 		panel.add(new JLabel("Nom d'utilisateur:"));
 		loginUsername = new JTextField("drmdh@msn.com");
 		panel.add(loginUsername);
@@ -191,7 +205,7 @@ public class ApplicationGUI extends JFrame {
 		JLabel messageLabel = 	new JLabel("");
 		panel.add(messageLabel);
 		
-		JButton loginButton = new JButton("Se connecter");
+		JButton loginButton = new JButton("Test si Install ok");
 		loginButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -301,91 +315,6 @@ public class ApplicationGUI extends JFrame {
 		return panel;
 	}
 
-	
-	/**
-	 * 
-	 */
-	protected void installOrUpdate() {
-		
- int  result= JOptionPane.showConfirmDialog(
-                     null,
-                     "Do you want to Dump  Database & init data ?",
-                     "DUMP  Database",
-                     JOptionPane.YES_NO_CANCEL_OPTION);
-         if (result == JOptionPane.YES_OPTION) {
-         	
-          
-					try {
-    						DatabaseInitializerImpl.sqlFileLoader();
-					} catch (Exception e2) {
-						 e2.printStackTrace();
-					}
-					 finally {
-						 
-						 
-						 tabbedPane.setSelectedIndex(LOGIN_TAB);
-						 
-						 
-						 
-					}
-					 
-             
-         } else if (result == JOptionPane.NO_OPTION) {
-        	 int dumpResult= JOptionPane.showConfirmDialog(
-                         null,
-                         "Do you want to Install from Dump file & init data ?",
-                         "Install from DUMP ",
-                         JOptionPane.YES_NO_CANCEL_OPTION); 
-
-             if (dumpResult == JOptionPane.YES_OPTION) {
-             	
-              
-    					try {
-        						DatabaseInitializerImpl.dumpDatabaseFile();
-    					} catch (Exception e2) {
-    						 e2.printStackTrace();
-    					}
-    					 finally {
-    						 tabbedPane.setSelectedIndex(LOGIN_TAB);
-    					}
-    					 
-                 
-             } else if (dumpResult == JOptionPane.NO_OPTION) {
-            	 int installDumpResult = JOptionPane.showConfirmDialog(
-                 null,
-                 "Do you want to Install Database & init data ?",
-                 "Install Database",
-                 JOptionPane.YES_NO_CANCEL_OPTION);
-
-                 if (installDumpResult == JOptionPane.YES_OPTION) {
-                 	
-                  
-        					try {
-						DatabaseInitializerImpl.installFromFile();
-        					} catch (Exception e2) {
-        						 e2.printStackTrace();
-        					}
-        					 finally {
-        						 tabbedPane.setSelectedIndex(LOGIN_TAB);
-        					}
-        					 
-                     
-                 } else if (installDumpResult == JOptionPane.NO_OPTION) {
-
-                 
-                 	 tabbedPane.setSelectedIndex(CONFIG_PROPERTIES_TAB);
-                     
-                 }
-             
-             	 
-                 
-             }
-         
-         	  
-             
-         }
-	}
-
 	ConfigPanel configPanel = new ConfigPanel();
 
 	private JPanel createTab3() {
@@ -396,7 +325,133 @@ public class ApplicationGUI extends JFrame {
 
 		return panel;
 	}
+	
+	/**
+	 * 
+	 */
+	protected void installOrUpdate() {
+		
+ //dmpSQLOrInstallFromSQLFile();
+ 
+ installFromSQLFile();
+	}
 
+	private void dmpSQLOrInstallFromSQLFile() {
+		int  result= JOptionPane.showConfirmDialog(
+		                     null,
+		                     "Do you want to Dump  Database & init data ?",
+		                     "DUMP  Database",
+		                     JOptionPane.YES_NO_CANCEL_OPTION);
+		         if (result == JOptionPane.YES_OPTION) {
+		         	
+		          
+							try {
+		    						DatabaseInitializerImpl.sqlFileLoader();
+							} catch (Exception e2) {
+								 e2.printStackTrace();
+							}
+							 finally {
+								 
+								 
+								 tabbedPane.setSelectedIndex(LOGIN_TAB);
+								 
+								 
+								 
+							}
+							 
+		             
+		         } else if (result == JOptionPane.NO_OPTION) {
+		        	 int dumpResult= JOptionPane.showConfirmDialog(
+		                         null,
+		                         "Do you want to Install from Dump file & init data ?",
+		                         "Install from DUMP ",
+		                         JOptionPane.YES_NO_CANCEL_OPTION); 
+		
+		             if (dumpResult == JOptionPane.YES_OPTION) {
+		             	
+		              
+		    					try {
+		        						DatabaseInitializerImpl.dumpDatabaseFile();
+		    					} catch (Exception e2) {
+		    						 e2.printStackTrace();
+		    					}
+		    					 finally {
+		    						 tabbedPane.setSelectedIndex(LOGIN_TAB);
+		    					}
+		    					 
+		                 
+		             } else if (dumpResult == JOptionPane.NO_OPTION) {
+		            	 installFromSQLFile();
+		             
+		             	 
+		                 
+		             }
+		         
+		         	  
+		             
+		         }
+	}
+
+	private void installFromSQLFile() {
+		int installDumpResult = JOptionPane.showConfirmDialog(
+		 null,
+		 "Do you want to Install Database & init data ?",
+		 "Install Database",
+		 JOptionPane.YES_NO_CANCEL_OPTION);
+
+		 if (installDumpResult == JOptionPane.YES_OPTION) {
+		 	
+		  
+					try {
+				DatabaseInitializerImpl.installFromFile();
+					} catch (Exception e2) {
+						 e2.printStackTrace();
+					}
+					 finally {
+						 tabbedPane.setSelectedIndex(LOGIN_TAB);
+					}
+					 
+		     
+		 } else if (installDumpResult == JOptionPane.NO_OPTION) {
+
+		 
+		 	 tabbedPane.setSelectedIndex(CONFIG_PROPERTIES_TAB);
+		     
+		 }
+	}
+
+	
+	private   void startLoginFormApplication() {
+
+		SwingUtilities.invokeLater(() -> {
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			String className = Config.getLoginClassNameMainClazz(); // Remplacez par le nom complet de votre classe
+			
+			///  String className = "org.hmd.angio.PhotoOrganizerApp"; // Remplacez par le nom complet de votre classe
+			
+			try {
+				initClass(className);
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+				
+			
+		});
+	
+	  setVisible(false);
+
+//        // Mettez ici le code pour démarrer votre application après la connexion réussie
+//        JOptionPane.showMessageDialog(this, "Application démarrée avec succès!", "Succès",
+//                JOptionPane.INFORMATION_MESSAGE);
+//        // Ajoutez ici le code pour le démarrage effectif de votre application
+	}
 	private   void startApplication() {
 
 		SwingUtilities.invokeLater(() -> {
@@ -428,54 +483,9 @@ public class ApplicationGUI extends JFrame {
 //        // Ajoutez ici le code pour le démarrage effectif de votre application
 	}
 
-	private static   void initClass(String className) throws InvocationTargetException {
-		Class<?> clazz = null;
-		try {
-		    clazz = Class.forName(className);
-		} catch (ClassNotFoundException e) {
-		    e.printStackTrace();
-		    // Gérer l'exception, peut-être la classe n'existe pas ou le nom est incorrect
-		}
-		
-		Object instance = null;
-		try {
-		    instance = clazz.getDeclaredConstructor().newInstance();
-		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-		    e.printStackTrace();
-		    // Gérer les exceptions ici
-		}
-	}
 
-	private   void startLoginFormApplication() {
 
-		SwingUtilities.invokeLater(() -> {
-			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			String className = Config.getLoginClassNameMainClazz(); // Remplacez par le nom complet de votre classe
-			
-			///  String className = "org.hmd.angio.PhotoOrganizerApp"; // Remplacez par le nom complet de votre classe
-			try {
-				initClass(className);
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			
-			
-		});
 
-	  setVisible(false);
-
-//        // Mettez ici le code pour démarrer votre application après la connexion réussie
-//        JOptionPane.showMessageDialog(this, "Application démarrée avec succès!", "Succès",
-//                JOptionPane.INFORMATION_MESSAGE);
-//        // Ajoutez ici le code pour le démarrage effectif de votre application
-	}
 	
 	public static   void startApplication(String className,Component comp) {
 
@@ -507,7 +517,33 @@ public class ApplicationGUI extends JFrame {
 	}
 
  
-	
+	private static   void initClass(String className) throws InvocationTargetException {
+		Class<?> clazz = null;
+		try {
+		    clazz = Class.forName(className);
+		} catch (ClassNotFoundException e) {
+		    e.printStackTrace();
+		    // Gérer l'exception, peut-être la classe n'existe pas ou le nom est incorrect
+		}
+		
+		Object instance = null;
+		try {
+		    instance = clazz.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+		    e.printStackTrace();
+		    // Gérer les exceptions ici
+		}
+		
+		
+		JFrame frame = (JFrame) instance;
+		 frame.setTitle("Login");
+		 frame.setSize(300, 120);
+		 frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		 frame.setLocationRelativeTo(null);
+		 
+		 frame.setVisible(true); 
+		 
+	}
 	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> new ApplicationGUI());

@@ -45,7 +45,9 @@ public class LoginFormMain extends JFrame {
 
         // Create fields
         usernameField = new JTextField(20);
+        usernameField.setText("hmd");
         passwordField = new JPasswordField(20);
+        passwordField.setText("hmd");
         loginButton = new JButton("Login");
         // Handle login button click
         loginButton.addActionListener(this::performLogin);
@@ -100,6 +102,9 @@ public class LoginFormMain extends JFrame {
 //					  JOptionPane.showMessageDialog(this, "Loged as admin", "Login  success", JOptionPane.INFORMATION_MESSAGE);
 					  
 		 StartWorkingForm firstFrame = new  StartWorkingForm(); 
+		 
+		 firstFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		 firstFrame.setLocationRelativeTo(null);
 				firstFrame.setVisible(true); // Ouvrir la seconde JFrame
 		        this.dispose(); // Fermer la JFrame actuelle
 					return; 
@@ -107,7 +112,8 @@ public class LoginFormMain extends JFrame {
 		}
          
          org.amia.play.ihm.TicketPrintingIHM secondFrame = new org.amia.play.ihm.TicketPrintingIHM();
-	           secondFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	           secondFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+	           secondFrame.setLocationRelativeTo(null);
 	           secondFrame.setVisible(true); // Ouvrir la seconde JFrame
 	        this.dispose(); // Fermer la JFrame actuelle
 	        return ;
@@ -132,7 +138,7 @@ public class LoginFormMain extends JFrame {
 		// Initialize and set up the main frame
 		 frame.setTitle("Login");
 		 frame.setSize(300, 120);
-		 frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		 frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		 frame.setLocationRelativeTo(null);
 		 
 		 frame.setVisible(true);

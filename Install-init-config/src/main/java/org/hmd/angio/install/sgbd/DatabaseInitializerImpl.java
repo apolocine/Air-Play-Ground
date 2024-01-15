@@ -21,7 +21,16 @@ public class DatabaseInitializerImpl implements DatabaseInitializer {
 	public static boolean verifyPassword(String username,String password) { 
 		Object user = getUser(  username,  password);
 		// String cryptedPasword  =  encrypt(password  );
-	
+		
+		//hash du password avant enregistrement. 
+		//  String hashedPassword = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
+		 
+		 //vérification de la resemblance du hash 
+//		  if (user != null && BCrypt.verifyer().verify(password.toCharArray(), user.getPassword()).verified) {
+//			  
+//		  }
+		
+		
 		if(user!=null) {
 			 return true;
 		}else

@@ -12,7 +12,7 @@ import org.amia.playground.dto.Printer;
 import org.hmd.angio.install.sgbd.DatabaseManager;
 
 public class PrinterLister {
-	
+		static Connection con = DatabaseManager.getConnection();
 	public static List<String> getPrinters() {
 	    PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
 	    List<String> printerNames = new ArrayList<>();
@@ -24,7 +24,7 @@ public class PrinterLister {
 	
 	
 	public static List<String> getPrintersFromDB() {
-		Connection con = DatabaseManager.getConnection();
+	
 		PrinterRepository pPrinterRepository = new PrinterRepository(con );
 		
 		  List<String> printerNames = new ArrayList<>();
@@ -36,22 +36,49 @@ public class PrinterLister {
 	    return printerNames;
 	}
 	
+//	public static List<String> getPrintersNotInDB() {
+//		List<String> printerNames = new ArrayList<>();
+//		 List<String> printersFromDB= getPrintersFromDB();
+//		 List<String> printServices= getPrinters();
+//		 
+//		 for (String printer : printServices) {
+//			if(! printersFromDB.contains(printer)) {
+//				 printerNames.add(printer);
+//			}
+//			
+//		}
+//		 return printerNames;
+//		 
+//	}
+	
+	
+	
+	
 	public static List<String> getPrintersNotInDB() {
 		List<String> printerNames = new ArrayList<>();
 		 List<String> printersFromDB= getPrintersFromDB();
 		 List<String> printServices= getPrinters();
 		 
 		 for (String printer : printServices) {
-			if(! printersFromDB.contains(printer)) {
+			 
+			 if( ! printersFromDB.contains(printer)) {
 				 printerNames.add(printer);
 			}
+			 
+			 
+			 
+//			 for (String printerDB : printersFromDB) {
+//				if(! printer.equals(printerDB) && ! printerNames.contains(printer)) {
+//				 printerNames.add(printer);
+//			}
+//			
+//			}
 			
 		}
 		 return printerNames;
 		 
 	}
-	
-	
+	 
     public static void main(String[] args) {
         // Obtenez et listez tous les services d'impression (imprimantes) disponibles
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);

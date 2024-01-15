@@ -96,6 +96,9 @@ public class PrinterRepository implements CRUDRepository<Printer> {
     }
 
     @Override
+    /**
+     * printer named in DB 
+     */
     public List<Printer> readAll() {
         List<Printer> printers = new ArrayList<>();
         String sql = "SELECT * FROM Printers";

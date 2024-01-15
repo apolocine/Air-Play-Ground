@@ -70,7 +70,7 @@ public class GamePrinterForm extends JPanel {
 		printerComboBox.setRenderer(new PrinterRenderer());
 
 		 
-
+		 reload(null) ;
 	}
 
 	private JPanel createInputPanel() {

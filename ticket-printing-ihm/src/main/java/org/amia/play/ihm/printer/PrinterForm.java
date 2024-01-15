@@ -139,7 +139,7 @@ public class PrinterForm extends JPanel {
         	for (String string : printerNames) {
 					printerComboBox.addItem(string);
 			}
-        
+        	printerComboBox.repaint();
             List<Printer> printers = printerRepository.readAll(); // Adapt to your method
             tableModel.setPrinters(printers);
         } catch (Exception e) {
@@ -165,6 +165,8 @@ public class PrinterForm extends JPanel {
                                               "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+        
+         loadPrinterData();
     }
     
     
