@@ -23,6 +23,7 @@ import org.amia.playground.dao.impl.GameRepository;
 import org.amia.playground.dao.impl.PermissionsRepository;
 import org.amia.playground.dao.impl.PrinterRepository;
 import org.amia.playground.dao.impl.RoleRepository;
+import org.amia.playground.dao.impl.TicketRepository;
 import org.amia.playground.dao.impl.UserRepository;
 import org.hmd.angio.install.sgbd.DatabaseManager;
 
@@ -78,10 +79,11 @@ public class ConfigurationPanel extends JFrame {
     	JTabbedPane jTabbedPane = new JTabbedPane();
     	
     	
-    //	jTabbedPane.addTab("Users", new DigitPanel( ));
+    //	jTabbedPane.addTab("Users", new DigitPanel( )); newTicket
     	
+    	jTabbedPane.addTab("TicketForm", new TicketForm(new TicketRepository(con)  )); 
     	jTabbedPane.addTab("Pricing", new GamePricingForm(new GamePricingRepository(con) , new GameRepository(con) )); 
-    	jTabbedPane.addTab("Users", new UserForm(new UserRepository(con)));
+        	jTabbedPane.addTab("Users", new UserForm(new UserRepository(con)));
     	jTabbedPane.addTab("Roles", new RoleForm(new RoleRepository(con), new PermissionsRepository(con)));
     	jTabbedPane.addTab("UserRoles", new UserRolesForm(new UserRepository(con)));
     	jTabbedPane.addTab("Permissions", new PermissionForm(new PermissionsRepository(con)));

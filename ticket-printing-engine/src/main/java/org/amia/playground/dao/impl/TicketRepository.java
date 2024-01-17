@@ -16,6 +16,7 @@ import org.amia.playground.dao.CRUDRepository;
 import org.amia.playground.dto.Game;
 import org.amia.playground.dto.GamePricing;
 import org.amia.playground.dto.Ticket;
+import org.hmd.angio.install.sgbd.DatabaseManager;
 
 public class TicketRepository implements CRUDRepository<Ticket> {
     private final Connection conn;
@@ -28,11 +29,13 @@ public class TicketRepository implements CRUDRepository<Ticket> {
     }
  // Create a new ticket
     public Ticket create(Ticket ticket) {
-        String sql = "INSERT INTO Tickets (GameID, GamePricingID,  Barcode ) VALUES (?, ?, ? )";
+        String sql = "INSERT INTO Tickets (GameID, GamePricingID, UserID, ValidDate, Barcode ) VALUES (?, ?, ?, ?, ? )";
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, ticket.getGameID());
             stmt.setInt(2, ticket.getGamePricingID()); 
-            stmt.setString(3, ticket.getBarcode()); 
+            stmt.setInt(3, ticket.getUserID()); 
+            stmt.setTimestamp(4, Timestamp.valueOf(ticket.getValidDate()));
+            stmt.setString(5, ticket.getBarcode()); 
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {
@@ -64,6 +67,9 @@ public class TicketRepository implements CRUDRepository<Ticket> {
                 ticket.setTicketId(rs.getInt("TicketID"));
                 ticket.setGameID(rs.getInt("GameID"));
                 ticket.setGamePricingID(rs.getInt("GamePricingID")); 
+                ticket.setUserID(rs.getInt("UserID")); 
+                ticket.setValidDate(rs.getTimestamp("ValidDate").toLocalDateTime()); 
+                
                 ticket.setBarcode(rs.getString("Barcode")); 
                 return ticket;
             }
@@ -83,7 +89,17 @@ public class TicketRepository implements CRUDRepository<Ticket> {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 // Extract data from result set and add to list
-                tickets.add(new Ticket()); // Replace with actual ticket object
+            	
+            	Ticket ticket = new Ticket();
+                ticket.setTicketId(rs.getInt("TicketID"));
+                ticket.setGameID(rs.getInt("GameID"));
+                ticket.setGamePricingID(rs.getInt("GamePricingID")); 
+                ticket.setUserID(rs.getInt("UserID")); 
+
+                ticket.setValidDate(rs.getTimestamp("ValidDate").toLocalDateTime()); 
+                ticket.setBarcode(rs.getString("Barcode")); 
+            	
+                tickets.add(ticket); // Replace with actual ticket object
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error reading all tickets: ", e);
@@ -93,12 +109,15 @@ public class TicketRepository implements CRUDRepository<Ticket> {
 
     @Override
     public Ticket update(Ticket ticket) {
-        String sql = "UPDATE Tickets SET GameID = ?, GamePricingID = ?, Barcode = ?  WHERE TicketID = ?";
+        String sql = "UPDATE Tickets SET GameID = ?, GamePricingID = ?, UserID = ?, ValidDate = ?, Barcode = ?  WHERE TicketID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
         	 stmt.setInt(1, ticket.getGameID());
              stmt.setInt(2, ticket.getGamePricingID()); 
-             stmt.setString(3, ticket.getBarcode()); 
-             stmt.setInt(4, ticket.getTicketId()); 
+             stmt.setInt(3, ticket.getUserID()); 
+             stmt.setTimestamp(4, Timestamp.valueOf(ticket.getValidDate()));
+
+             stmt.setString(5, ticket.getBarcode()); 
+             stmt.setInt(6, ticket.getTicketId()); 
 
             stmt.executeUpdate();
             return ticket;
@@ -234,6 +253,66 @@ public class TicketRepository implements CRUDRepository<Ticket> {
 		}
 		return null; // or consider throwing an exception
 	}
+	
+	
+	
+	
+	
+	 public List<Ticket> fetchTicketsFromDatabase(int page, int pageSize) {
+	        List<Ticket> tickets = new ArrayList<>();
+	        String sql = "SELECT * FROM Tickets LIMIT ? OFFSET ?";
+
+	        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	            pstmt.setInt(1, pageSize);
+	            pstmt.setInt(2, page * pageSize);
+
+	            try (ResultSet rs = pstmt.executeQuery()) {
+	                while (rs.next()) {
+	                    Ticket ticket = new Ticket(); 
+	                    ticket.setTicketId(rs.getInt("TicketID"));
+	                    ticket.setGameID(rs.getInt("GameID"));
+	                    ticket.setGamePricingID(rs.getInt("GamePricingID")); 
+	                    ticket.setUserID(rs.getInt("UserID")); 
+
+	                    ticket.setValidDate(rs.getTimestamp("ValidDate").toLocalDateTime()); 
+	                    ticket.setBarcode(rs.getString("Barcode")); 
+	                	
+	                    tickets.add(ticket); // Replace with actual ticket object
+	                    
+	                }
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace(); // Ou une meilleure gestion des erreurs selon vos besoins
+	        }
+
+	        return tickets;
+	    }
+	public int getCount() {
+		String selectSQL = "SELECT COUNT(*) AS row_count FROM Tickets ;";
+
+		 LOGGER.info (selectSQL);
+
+		try (PreparedStatement preparedStatement = conn.prepareStatement(selectSQL)) {
+
+			// Exécuter la requête
+			ResultSet resultSet = preparedStatement.executeQuery();
+
+			// Traiter le résultat
+			if (resultSet.next()) {
+				int rowCount = resultSet.getInt("row_count");
+				System.out.println(rowCount);
+				return rowCount  ;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return 0;
+	}
+	 
+	 
+ 
 }
 
 

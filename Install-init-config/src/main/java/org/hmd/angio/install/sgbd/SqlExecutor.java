@@ -43,30 +43,25 @@ public class SqlExecutor {
      */
     public static void mySqlFileLoader( String dbName, String dbUser, String dbPass, String path) {
     	
-    	  try {
-//              String dbName = "yourDatabaseName";
-//              String dbUser = "yourUsername";
-//              String dbPass = "yourPassword";
-//              String filePath = "path/to/your/dumpfile.sql";
-
-              // Constructing the command to load the SQL file into the database
-              String[] executeCmd = new String[]{"mysql", dbName, "-u" + dbUser, "-p" + dbPass, "-e", " source " + path};
-
-              // Execute the command
-              Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
-
-              int processComplete = runtimeProcess.waitFor();
-
-              // Check the process exit value
-              if (processComplete == 0) {
-                  System.out.println("Data has been restored successfully!");
-              } else {
-                  System.out.println("Could not restore the Data!");
-              }
-
-          } catch (IOException | InterruptedException ex) {
-              ex.printStackTrace();
-          }
+//    	  try { 
+//              // Constructing the command to load the SQL file into the database
+//              String[] executeCmd = new String[]{"mysql", dbName, "-u" + dbUser, "-p" + dbPass, "-e", " source " + path};
+//
+//              // Execute the command
+//              Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
+//
+//              int processComplete = runtimeProcess.waitFor();
+//
+//              // Check the process exit value
+//              if (processComplete == 0) {
+//                  System.out.println("Data has been restored successfully!");
+//              } else {
+//                  System.out.println("Could not restore the Data!");
+//              }
+//
+//          } catch (IOException | InterruptedException ex) {
+//              ex.printStackTrace();
+//          }
     }
 
     /**
@@ -77,24 +72,24 @@ public class SqlExecutor {
      * @param path
      */
     public static void mysqldump( String dbName, String dbUser, String dbPass, String path) {
-        try {  
-            // Construct command
-            String command = "mysqldump -u " + dbUser + " -p" + dbPass + " " + dbName + " -r " + path;
-
-            // Execute the command
-            Process runtimeProcess = Runtime.getRuntime().exec(command);
-
-            int processComplete = runtimeProcess.waitFor();
-
-            // Check if dump is successful
-            if (processComplete == 0) {
-                System.out.println("Dump completed successfully");
-            } else {
-                System.out.println("Could not create the dump");
-            }
-        } catch (IOException | InterruptedException ex) {
-            ex.printStackTrace();
-        }
+//        try {  
+//            // Construct command
+//            String command = "mysqldump -u " + dbUser + " -p" + dbPass + " " + dbName + " -r " + path;
+//
+//            // Execute the command
+//            Process runtimeProcess = Runtime.getRuntime().exec(command);
+//
+//            int processComplete = runtimeProcess.waitFor();
+//
+//            // Check if dump is successful
+//            if (processComplete == 0) {
+//                System.out.println("Dump completed successfully");
+//            } else {
+//                System.out.println("Could not create the dump");
+//            }
+//        } catch (IOException | InterruptedException ex) {
+//            ex.printStackTrace();
+//        }
     }
     // ... other methods ...
 }

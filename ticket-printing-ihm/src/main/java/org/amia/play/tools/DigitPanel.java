@@ -8,11 +8,16 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import org.amia.play.ihm.TicketPrintingIHM;
+import org.hmd.angio.conf.Config;
+
 public class DigitPanel extends JPanel {
+	
 	/**
 	 * 
 	 */
@@ -23,6 +28,11 @@ public class DigitPanel extends JPanel {
 	private  int height = 20;
 	int compWidth = 250;
 	int compHeight = 80;
+	
+	private static final Logger LOGGER = Logger.getLogger(DigitPanel.class.getName());
+	
+	  String numberdirectory = Config.getNumberssDirectory();
+	  
 	// Classe interne pour gérer les images à dessiner et leurs positions
 	private class ImageToDraw {
 		BufferedImage image;
@@ -64,10 +74,12 @@ public class DigitPanel extends JPanel {
 
 //                String imagePath = "numbers/" + i + ".png"; // chemin relatif dans le JAR
 //                images[i] = ImageIO.read(classLoader.getResource(imagePath));
-//                
-				String imagePath = "files/numbers/" + i + ".png"; // chemin relatif dans le JAR
+              
+				String imagePath =numberdirectory+ i + ".png";;// ""  // chemin relatif dans le JAR
 				java.net.URL imageUrl = classLoader.getResource(imagePath);
-				System.out.println(imageUrl);
+				 
+				LOGGER.info(""+imageUrl);
+				
 				BufferedImage originalImage = ImageIO.read(imageUrl);/// ImageIO.read(new File(imagePath));
 
 			
@@ -76,8 +88,8 @@ public class DigitPanel extends JPanel {
 				// backgroundImage = Toolkit.getDefaultToolkit().getImage(imageUrl);
 
 			}
-			BufferedImage originalpointImage =ImageIO.read(classLoader.getResource("files/numbers/point.png"));// Image pour le point
-					BufferedImage originalcommaImage =ImageIO.read(classLoader.getResource("files/numbers/comma.png")); // Image pour la virgule
+			BufferedImage originalpointImage =ImageIO.read(classLoader.getResource(numberdirectory+"point.png"));// Image pour le point
+			BufferedImage originalcommaImage =ImageIO.read(classLoader.getResource(numberdirectory+"comma.png")); // Image pour la virgule
 			images[10] =   resizeImage(originalpointImage, width, height); // Redimensionner l'image
 			images[11] =  resizeImage(originalcommaImage, width, height); // Redimensionner l'image
 

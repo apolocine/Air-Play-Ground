@@ -12,16 +12,24 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Base64;
 
+import org.hmd.angio.conf.Config;
+
 public class BarcodeUtil {
 
+	/**
+	 * 
+	 * @param data ticketID
+	 * @return
+	 */
     public static String generateBarcode(String data) {
         int width = 300;   // width of the barcode image
         int height = 150;  // height of the barcode image
         String imageFormat = "png"; // file format
 
         try {
+        	String barecodeDir = Config.getBarcodesDirectory();
             BitMatrix bitMatrix = new MultiFormatWriter().encode(data, BarcodeFormat.CODE_128, width, height);
-            Path path = FileSystems.getDefault().getPath("Barcode.png");
+            Path path = FileSystems.getDefault().getPath(barecodeDir+"barcode"+data+".png");
             MatrixToImageWriter.writeToPath(bitMatrix, imageFormat, path); // Save the barcode image to file
             
             // Convert to Base64 for easy display in various environments (optional)

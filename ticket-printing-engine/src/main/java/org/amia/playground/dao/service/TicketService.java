@@ -10,6 +10,7 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,7 @@ import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
 import javax.swing.ImageIcon;
 
+import org.amia.playground.dao.impl.ConnectedUser;
 import org.amia.playground.dao.impl.GamePricingRepository;
 import org.amia.playground.dao.impl.GamePrinterRepository;
 import org.amia.playground.dao.impl.GameRepository;
@@ -50,7 +52,10 @@ public class TicketService {
         // Generate barcode
         String barcode = BarcodeUtil.generateBarcode( ""+ticket.getTicketId());
         ticket.setBarcode(barcode);
-
+ConnectedUser.getInstance();
+int userID = ConnectedUser.getUser().getUserID();
+ticket.setValidDate(LocalDateTime.now());
+ticket.setUserID(userID);
         // Save ticket using repository
         return ticketRepository.create(ticket);
     }
@@ -232,7 +237,7 @@ public class TicketService {
                     BufferedImage barcodeImage = BarcodeUtil.generateBarcodeImage(ticket.getBarcode());
                     if (barcodeImage != null) {
                         int x = 10;  // adjust for your ticket layout
-                        int y = 50;  // adjust for after the price and image
+                        int y = 20;  // adjust for after the price and image
                         yStart+=inteval;
                         y = yStart;
                         g2d.drawImage(barcodeImage, x, y, null);

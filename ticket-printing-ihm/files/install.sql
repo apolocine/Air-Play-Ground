@@ -81,9 +81,12 @@ CREATE TABLE GamePricing (
     TicketID INT AUTO_INCREMENT PRIMARY KEY,
     GameID INT,
     GamePricingID INT, 
+    UserID INT,
+    ValidDate DATETIME,
     Barcode VARCHAR(255), 
     FOREIGN KEY (GameID) REFERENCES Games(GameID) ,
-    FOREIGN KEY (GamePricingID) REFERENCES GamePricing(PricingID) -- Adjust according to your actual FK constraints
+    FOREIGN KEY (GamePricingID) REFERENCES GamePricing(PricingID), -- Adjust according to your actual FK constraints
+     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
  
 

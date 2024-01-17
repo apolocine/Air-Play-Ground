@@ -5,8 +5,10 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import javax.swing.Icon;
@@ -20,12 +22,14 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.amia.play.tools.DigitPanel;
+import org.amia.playground.dao.impl.ConnectedUser;
 import org.amia.playground.dao.impl.GameRepository;
 import org.amia.playground.dao.impl.TicketRepository;
 import org.amia.playground.dao.service.TicketService;
 import org.amia.playground.dto.Game;
 import org.amia.playground.dto.GamePricing;
 import org.amia.playground.dto.Ticket;
+import org.amia.playground.utils.BarcodeUtil;
 import org.amia.playground.utils.ImageUtil;
 import org.hmd.angio.install.sgbd.DatabaseManager;
 
@@ -54,9 +58,10 @@ public class TicketPrintingIHM extends JFrame {
 
 		// Set a background image
 		setLayout(new BorderLayout());
-
+		Random r = new Random();
+        int n = r.nextInt(1,4);
 		JLabel background = new JLabel(
-				ImageUtil.resizeImageIcon(new ImageIcon("files/icons/backgrond02.png"), 800, 800));
+				ImageUtil.resizeImageIcon(new ImageIcon("files/icons/backgrond0"+n+".png"), 800, 800));
 		setContentPane(background);
 		background.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 200)); // Adjust layout and spacing as needed
 
@@ -105,37 +110,47 @@ public class TicketPrintingIHM extends JFrame {
 //				eremetre le formulaire à zero
 //				et decrementer la totalFacture
 		//		tickets.remove(ticket);
+			int count = 	ticketRepository.getCount();
+			count++;
+				  // Generate barcode
+		String barcode = BarcodeUtil.generateBarcode( ""+count);
+		ticket.setBarcode(barcode);
+		ConnectedUser.getInstance();
+		int userID = ConnectedUser.getUser().getUserID();
+		ticket.setValidDate(LocalDateTime.now());
+		ticket.setUserID(userID);
+				
 				ticketRepository.create(ticket);
 			}else {
 				notPrintedTicket.add(ticket);
 			}
 		}
-		if(notPrintedTicket.isEmpty()) {
-			
-			for (Ticket ticket : tickets2) {
-				ticketRepository.create(ticket);
-			}
+		if (notPrintedTicket.isEmpty()) {
+			// remise à zero les formulaire
 			tickets2.clear();
-			
-			//		remise à zero les formulaire 
-		remiseaZeroFormul();
-		}else {
+			remiseaZeroFormul();
+
+		} else {
+						
+				
 			 // Affichez un message de confirmation
 			   int result = JOptionPane.showConfirmDialog(
 	                    null,
 	                    "All of the Tickets was not printed. Do you want to reset form?",
 	                    "Reset Forms",
-	                    JOptionPane.YES_NO_CANCEL_OPTION);
+	                    JOptionPane.YES_NO_OPTION);
 
-	            if (result == JOptionPane.YES_OPTION) {  
-	            	 LOGGER.info("Remise à zero du formulaire");
-	            	remiseaZeroFormul();
-	            } 
-	            else if (result == JOptionPane.NO_OPTION) {
-	            	 LOGGER.info("Pas de remise à zero du formulaire");
-	            }else {
-	            	
-	            }
+				if (result == JOptionPane.YES_OPTION) {
+					LOGGER.info("Remise à zero du formulaire");
+
+					for (Ticket ticket : notPrintedTicket) {
+						ticketRepository.delete(ticket.getTicketId());
+					}
+					notPrintedTicket.clear();
+					remiseaZeroFormul();
+				} else if (result == JOptionPane.NO_OPTION) {
+					LOGGER.info("Pas de remise à zero du formulaire");
+				}  
 		}
 		
 		

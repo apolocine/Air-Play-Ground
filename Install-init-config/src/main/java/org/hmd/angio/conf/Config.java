@@ -114,7 +114,8 @@ public class Config {
         
         properties.setProperty("sql-file-path", "files\\install.sql");
         properties.setProperty("sql-dump-file", "files\\dumpfile.sql");
-        
+        properties.setProperty("barcodes-directory", "files\\barcodes\\");
+        properties.setProperty("numbers-directory", "files\\numbers\\"); 
         
 		File file = new File(CONFIG_FILE);
 
@@ -200,6 +201,16 @@ public class Config {
 	public static String getLoginClassNameMainClazz() {
 		
 		  return  properties.getProperty("login-main-class"); 
+	}
+	public static String getBarcodesDirectory() {
+		// TODO Auto-generated method stub
+		
+		return  properties.getProperty("barcodes-directory"); 
+	}
+	public static String getNumberssDirectory() {
+		// TODO Auto-generated method stub
+		
+		return  properties.getProperty("numbers-directory"); 
 	}
 	
 }

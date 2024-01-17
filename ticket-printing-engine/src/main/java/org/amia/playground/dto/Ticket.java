@@ -1,11 +1,19 @@
 package org.amia.playground.dto;
 
+import java.time.LocalDateTime;
+
 public class Ticket {
 	
 	private int ticketId;
 	private int gamePricingID;
     private int gameID; 
+    private int userID; 
+    
     private String barcode;  
+    
+    private LocalDateTime ValidDate;
+    
+    
     public Ticket(int gameId) {
 		super();
 		this.gameID = gameId;
@@ -41,6 +49,20 @@ public int getGamePricingID() {
 }
 public void setGamePricingID(int gamePricingID) {
 	this.gamePricingID = gamePricingID;
+}
+public int getUserID() {
+	return userID;
+}
+public void setUserID(int userID) {
+	this.userID = userID;
+}
+ 
+ 
+public LocalDateTime getValidDate() {
+	return ValidDate;
+}
+public void setValidDate(LocalDateTime validDate) {
+	ValidDate = validDate;
 }
   
 }
