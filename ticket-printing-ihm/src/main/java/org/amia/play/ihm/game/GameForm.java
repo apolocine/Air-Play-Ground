@@ -265,7 +265,7 @@ public class GameForm extends JPanel {
 		gameNameField.setText("");
 		ageRestrictionField.setSelectedItem(-1);
 		// Potentially a "Save" button to handle updating the existing game
-		gameIDField.setText("0");
+		gameIDField.setText("");
 		// Optionally, update an image preview
 			gameLogoImageLabel.setIcon(null);
 			// Optionally, update an image preview
