@@ -85,9 +85,9 @@ public class Config {
         // Ajoutez des propriétés génériques
         properties.setProperty("directory", "C:\\Users\\DELL\\Documents\\0APng");
         
-        properties.setProperty("db.sgbd", "jdbc:mysql://localhost:3306/");
+        properties.setProperty("db.sgbd", "jdbc:mysql://localhost:3383/");
         
-        properties.setProperty("db.url", "jdbc:mysql://localhost:3306/dbprinters");
+        properties.setProperty("db.url", "jdbc:mysql://localhost:3383/dbprinters");
         properties.setProperty("db.user", "root");
         properties.setProperty("db.password", "");
         

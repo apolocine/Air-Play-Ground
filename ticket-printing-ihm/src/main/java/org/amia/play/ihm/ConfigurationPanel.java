@@ -40,7 +40,7 @@ public class ConfigurationPanel extends JFrame {
 		// Initialize and set up the main frame
 		 frame.setTitle("Application Config");
 		 frame.setSize(800, 600);
-		 frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		 frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		 frame.setLocationRelativeTo(null);
 		 
 		 frame.setVisible(true);
@@ -69,7 +69,7 @@ public class ConfigurationPanel extends JFrame {
     	// Initialize and set up the main frame
     			 setTitle("Application Config");
     			 setSize(800, 600);
-    			 setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    			 setDefaultCloseOperation(EXIT_ON_CLOSE);
     			 setLocationRelativeTo(null);
     			 
     			 

@@ -13,6 +13,10 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +26,8 @@ public class GameForm extends JPanel {
 	private static final Logger LOGGER = Logger.getLogger(GameForm.class.getName()); 
 
 	// Form components
+	
+	private JTextField gameIDField;
 	private JTextField gameNameField;
 	private JComboBox<String> ageRestrictionField;
 
@@ -47,6 +53,13 @@ public class GameForm extends JPanel {
 	private JPanel createInputPanel() {
 		JPanel inputPanel = new JPanel(new GridLayout(0, 2));
 
+		
+		inputPanel.add(new JLabel("Game ID:"));
+		
+		gameIDField = new JTextField(20);
+		gameIDField.setEditable(false);
+		inputPanel.add(gameIDField);
+		
 		inputPanel.add(new JLabel("Game Name:"));
 		gameNameField = new JTextField(20);
 		inputPanel.add(gameNameField);
@@ -121,14 +134,33 @@ public class GameForm extends JPanel {
 			game.setAgeRestriction((String) ageRestrictionField.getSelectedItem());
 			game.setGameImage(gameImage);
 			game.setLogoImage(gameLogoImage);
-			Game savedGame = gameRepository.create(game);
-			LOGGER.info("Saved game with ID: " + savedGame.getGameID());
+			
+			
+	if (!gameIDField.getText().isEmpty()) {
+				
+				try {
+					
+					game.setGameID(Integer.parseInt(gameIDField.getText()));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				gameRepository.update(game); // Ou updateGamePricing si c'est une mise à jour
+			} else {
+				// Appel au repository pour sauvegarder l'objet GamePricing
+			  gameRepository.create(game); // Ou updateGamePricing si c'est une mise à jour
+
+			
+			}
+	
+	
+			LOGGER.info("Saved game with ID: " + game.getGameID());
 		} catch (Exception e) {
 			LOGGER.severe("Error saving game: " + e.getMessage());
 			JOptionPane.showMessageDialog(this, "Error saving game: " + e.getMessage(), "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
-
+		initGameForm();
 		loadGameData();
 	}
 
@@ -206,6 +238,39 @@ public class GameForm extends JPanel {
 		gameNameField.setText(game.getGameName());
 		ageRestrictionField.setSelectedItem(game.getAgeRestriction());
 		// Potentially a "Save" button to handle updating the existing game
-
+		gameIDField.setText("" + game.getGameID());
+		
+		ageRestrictionField.setSelectedItem(game.getAgeRestriction());
+		
+		if(game.getLogoImage() != null ) {
+			gameLogoImage = game.getLogoImage();
+			ImageIcon icon = ImageUtil.resizeImageIcon(new ImageIcon(gameLogoImage), 40, 40);
+			// Optionally, update an image preview
+			gameLogoImageLabel.setIcon(icon);
+		}
+		
+		if(game.getGameImage() != null ) {
+			gameImage = game.getGameImage();
+			ImageIcon icon = ImageUtil.resizeImageIcon(new ImageIcon(gameImage), 40, 40);
+			// Optionally, update an image preview
+			gameImageLabel.setIcon(icon);
+		}
+		
+		
+		
+	}
+	
+	
+	void initGameForm(){
+		gameNameField.setText("");
+		ageRestrictionField.setSelectedItem(-1);
+		// Potentially a "Save" button to handle updating the existing game
+		gameIDField.setText("0");
+		// Optionally, update an image preview
+			gameLogoImageLabel.setIcon(null);
+			// Optionally, update an image preview
+			gameImageLabel.setIcon(null); 
+		
+	 	    
 	}
 }

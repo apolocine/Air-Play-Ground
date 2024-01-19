@@ -47,5 +47,7 @@
 	<classpathentry kind="lib" path="D:/TicketPrinter/lib/thumbnailator-0.4.20.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Install-init-config"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ticket-printing-engine"/>
+	<classpathentry kind="lib" path="D:/TicketPrinter/lib/ticket-engine.jar"/>
+	<classpathentry kind="lib" path="D:/TicketPrinter/lib/ticket-init-config.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
