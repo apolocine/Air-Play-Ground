@@ -1,12 +1,14 @@
 package org.amia.play.ihm;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -18,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -57,7 +60,8 @@ public class TicketPrintingIHM extends JFrame {
 		setSize(800, 900); // Adjust size as needed
 
 		// Set a background image
-		setLayout(new BorderLayout());
+//		setLayout(new BorderLayout());
+		setLayout(new FlowLayout());
 		Random r = new Random();
         int n = r.nextInt(1,4);
 		JLabel background = new JLabel(
@@ -73,25 +77,41 @@ public class TicketPrintingIHM extends JFrame {
 		Connection conn = DatabaseManager.getConnection();
 		gameRepository = new GameRepository(conn);
 		ticketRepository = new TicketRepository(conn);
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new GridLayout(3, 2, 10, 10));
-		JPanel panelAll = getPanelTicketPrinting(gameRepository);
-		 
 		
-		getContentPane().add(panelAll, BorderLayout.CENTER);
-		getContentPane().add(digitPanel, BorderLayout.NORTH);
+		
+		JPanel panelAll = getPanelTicketPrinting(gameRepository);
+		
+		
+//		JScrollPane jScrollPane = new JScrollPane( noticePanel);
+//		// only a configuration to the jScrollPane...
+//		jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+//		jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+		 
 	
+		
+		 
+	
+		
+		
+		
+		
 //           getContentPane().add(ticketPrice);
 
-		JButton printButton = new JButton(
-				chooseIcon(ImageUtil.resizeImageIcon(new ImageIcon("files/icons/imprimante01.png"), 70, 70)));  
-		printButton.addActionListener(e -> printTickets(tickets));
-		getContentPane().add(printButton);
-		JButton printButton02 = new JButton(
-				chooseIcon(ImageUtil.resizeImageIcon(new ImageIcon("files/icons/imprimante02.png"), 70, 70)));  
-		printButton02.addActionListener(e -> printTickets(tickets));
-		getContentPane().add(printButton02);
+//		JButton printButton = new JButton(
+//				chooseIcon(ImageUtil.resizeImageIcon(new ImageIcon("files/icons/imprimante01.png"), 70, 70)));  
+//		printButton.addActionListener(e -> printTickets(tickets));
+//		getContentPane().add(printButton);
+//		JButton printButton02 = new JButton(
+//				chooseIcon(ImageUtil.resizeImageIcon(new ImageIcon("files/icons/imprimante02.png"), 70, 70)));  
+//		printButton02.addActionListener(e -> printTickets(tickets));
+//		getContentPane().add(printButton02);
 		
+	
+
+		
+
+		getContentPane().add(panelAll, BorderLayout.CENTER); 
 		
 	}
 
@@ -171,23 +191,40 @@ public class TicketPrintingIHM extends JFrame {
 
 	public JPanel getPanelTicketPrinting(GameRepository gameRepository) {
 
-		JPanel panelAll = new JPanel();
-
- 
+		JPanel panelAll = new JPanel(new GridLayout(0, 3, 10, 10));
+		panelAll.setOpaque(false);
+	        
+	        // Optionnel: définir une couleur de fond avec transparence
+	        // Note: les 4 paramètres sont rouge, vert, bleu, et alpha (transparence)
+		panelAll.setBackground(new Color(0, 0, 0, 100)); // Semi-transparent noir
+	        
+		
 		List<Game> gameList = gameRepository.readAll();
 		for (Game game : gameList) {
 
 			// Create the ticket increment/decrement buttons and labels for each game
 //        for (int i = 1; i <= gameList.size(); i++) {
 			JPanel panel = new JPanel(new BorderLayout());
+			  // Rendre le JPanel transparent
+	        panel.setOpaque(false);
+	        
+	        // Optionnel: définir une couleur de fond avec transparence
+	        // Note: les 4 paramètres sont rouge, vert, bleu, et alpha (transparence)
+	        panel.setBackground(new Color(0, 0, 0, 100)); // Semi-transparent noir
+	        
+	        
 			JButton incrementButton = new JButton(" + ", chooseIcon(game)); // Use gameIcon1, gameIcon2, or gameIcon3
-																			// depending on i
+//			incrementButton.setOpaque(false);
+			incrementButton.setBackground(new Color(0, 0, 0, 100)); 
+			// depending on i
 			JButton decrementButton = new JButton(" - ");
 			
 //			DigitPanel digitPanel= new DigitPanel(30,30,150,60);
 			
 			JTextField ticketCount = new JTextField("0", 15);
 			ticketCount.setEditable(false);
+//			ticketCount.setOpaque(false);
+//			ticketCount.setBackground(new Color(0, 0, 0, 100)); 
 			
 			//metre toutes les JTextField dans une liste globale pour les controlé.
 			ticketFieldCountList.add(ticketCount);
@@ -204,6 +241,41 @@ public class TicketPrintingIHM extends JFrame {
 
 			panelAll.add(panel);
 		}
+		
+		int count = gameList.size()%3;
+		LOGGER.info("-----> "+count);
+		count =3-count;
+		if(count!=0) {
+			for (int x=0;x<count;x++) {				 
+				panelAll.add(new JLabel());
+			} 
+		}
+		
+		
+		
+//		JPanel mainPanel = new JPanel();
+//		mainPanel.setLayout(new GridLayout(0, 3, 10, 10));
+//		mainPanel.add(digitPanel);
+
+	
+		JButton printButton = new JButton(
+				chooseIcon(ImageUtil.resizeImageIcon(new ImageIcon("files/icons/imprimante01.png"), 70, 70)));  
+		printButton.addActionListener(e -> printTickets(tickets));
+		JButton printButton02 = new JButton(
+				chooseIcon(ImageUtil.resizeImageIcon(new ImageIcon("files/icons/imprimante02.png"), 70, 70)));  
+		printButton02.addActionListener(e -> printTickets(tickets));
+		
+		panelAll.add(printButton);
+		
+		//digitPanel.setOpaque(false);
+		digitPanel.setBackground(new Color(10, 10, 110, 100)); 
+		panelAll.add(digitPanel, BorderLayout.CENTER);
+		
+		panelAll.add(printButton02);
+		
+		
+//		JScrollPane scrolPan = new JScrollPane(panelAll);
+//		return scrolPan;
 		return panelAll;
 	}
 
@@ -233,8 +305,11 @@ public class TicketPrintingIHM extends JFrame {
 		count++;
 		ticketCountField.setText(String.valueOf(count));
 
-		GamePricing gamePricing = gameRepository.getGamePricingByGameAndCurrentDate(game.getGameID()).getFirst();
-		
+		List<GamePricing> gamePricings = gameRepository.getGamePricingByGameAndCurrentDate(game.getGameID());
+		GamePricing gamePricing = null;
+		if(gamePricings !=null && gamePricings.size()!=00) {
+			gamePricing = gamePricings.get(0);
+		}
 		Ticket ticket = new Ticket(game.getGameID());
 		ticket.setBarcode("" + ticket.getTicketId());
 		ticket.setGamePricingID(gamePricing.getPricingId());
